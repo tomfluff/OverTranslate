@@ -777,6 +777,21 @@ same settings, the same seed usually gives the same output.</sys:String>
     <sys:String x:Key="S.Settings.Theme">Theme</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">Light</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">Dark</sys:String>
+    <sys:String x:Key="S.Settings.UiZoom">Interface zoom</sys:String>
+    <sys:String x:Key="S.Settings.TextSize">Text size</sys:String>
+    <sys:String x:Key="S.Settings.ZoomHint">Ctrl + Plus / Minus / 0 or Ctrl + mouse wheel zooms the window; add Shift to change the text size.</sys:String>
+    <sys:String x:Key="S.Settings.Speech">Read aloud</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeech">Use voices installed on this PC</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeechCheck">SAPI and Windows voices, offline. Languages with no voice here are read with an online voice.</sys:String>
+    <sys:String x:Key="S.Settings.NoLocalVoices">No voices for the languages OverTranslate offers were found on this PC.</sys:String>
+    <sys:String x:Key="S.Settings.VoiceAutomatic">Automatic</sys:String>
+    <sys:String x:Key="S.Settings.Voice">Voice</sys:String>
+    <sys:String x:Key="S.Settings.VoiceSpeed">Speed</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitch">Pitch</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitchTip">Drag in steps of 1%; double-click to reset</sys:String>
+    <sys:String x:Key="S.Settings.VoicePreview">Play a sample with this voice, speed and pitch</sys:String>
+    <sys:String x:Key="S.Settings.AddVoices">Add voices…</sys:String>
+    <sys:String x:Key="S.Settings.AddVoicesHint">A language appears here once a voice for it is installed. Windows voices are added in Settings › Time &amp; language › Speech; SAPI voices from other vendors appear too.</sys:String>
     <sys:String x:Key="S.Settings.UiLanguage">Interface language</sys:String>
 
     <sys:String x:Key="S.Settings.Advanced">Advanced</sys:String>

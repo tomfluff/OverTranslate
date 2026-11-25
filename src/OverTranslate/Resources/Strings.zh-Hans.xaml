@@ -775,6 +775,21 @@
     <sys:String x:Key="S.Settings.Theme">主题</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">浅色</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">深色</sys:String>
+    <sys:String x:Key="S.Settings.UiZoom">界面缩放</sys:String>
+    <sys:String x:Key="S.Settings.TextSize">文字大小</sys:String>
+    <sys:String x:Key="S.Settings.ZoomHint">Ctrl + 加号／减号／0 或 Ctrl + 鼠标滚轮可缩放窗口；再按住 Shift 则调整文字大小。</sys:String>
+    <sys:String x:Key="S.Settings.Speech">朗读</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeech">使用本机已安装的语音</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeechCheck">SAPI 与 Windows 语音，离线朗读。本机没有语音的语言改用在线语音。</sys:String>
+    <sys:String x:Key="S.Settings.NoLocalVoices">本机找不到 OverTranslate 支持语言的语音。</sys:String>
+    <sys:String x:Key="S.Settings.VoiceAutomatic">自动</sys:String>
+    <sys:String x:Key="S.Settings.Voice">语音</sys:String>
+    <sys:String x:Key="S.Settings.VoiceSpeed">语速</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitch">音调</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitchTip">以 1% 为单位拖动；双击可还原</sys:String>
+    <sys:String x:Key="S.Settings.VoicePreview">用这个语音、语速与音调试听</sys:String>
+    <sys:String x:Key="S.Settings.AddVoices">添加语音…</sys:String>
+    <sys:String x:Key="S.Settings.AddVoicesHint">安装某语言的语音后，该语言就会出现在这里。Windows 语音在“设置 › 时间和语言 › 语音”中添加；其他厂商的 SAPI 语音也会出现。</sys:String>
     <sys:String x:Key="S.Settings.UiLanguage">界面语言</sys:String>
 
     <sys:String x:Key="S.Settings.Advanced">高级设置</sys:String>

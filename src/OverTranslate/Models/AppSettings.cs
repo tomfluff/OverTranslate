@@ -9,6 +9,9 @@ namespace OverTranslate.Models;
 // read, and is read as Google (LanguageData.CurrentProvider). GoogleChrome is 「(Beta)」.
 public enum TranslationProvider { Google, Google2, GoogleChrome, Bing, Microsoft, DeepL, OpenAI, Youdao, TranSmart, Yandex, LocalAI }
 
+/// <summary>How a voice on this PC reads: <paramref name="Rate"/> times its normal speed, its pitch moved by <paramref name="Pitch"/> percent.</summary>
+public sealed record VoiceTuning(double Rate = 1, double Pitch = 0);
+
 public class AppSettings
 {
     /// <summary>
@@ -246,6 +249,30 @@ public class AppSettings
     public string TranSmartHost { get; set; } = "";
 
     public string Theme { get; set; } = "Dark";
+
+    /// <summary>
+    /// How much bigger or smaller the main window and Quick Lookup are drawn, 1 being as designed.
+    /// Clamped where it is applied (<see cref="Services.ZoomService"/>), since the file is editable.
+    /// </summary>
+    public double UiZoom { get; set; } = 1.0;
+
+    /// <summary>The font size of the text in the translation boxes, which Quick Lookup's result follows.</summary>
+    public double TextBoxFontSize { get; set; } = 14;
+
+    /// <summary>
+    /// Read aloud with the voices installed on this PC (SAPI and Windows) wherever there is one for
+    /// the language; the online voices read the rest. Off by default, which is how it always read.
+    /// </summary>
+    public bool LocalSpeechEnabled { get; set; }
+
+    /// <summary>
+    /// The voice on this PC chosen per language, keyed by engine code (en, ja, zh-TW) with a
+    /// <see cref="Services.LocalVoice.Id"/> as value. A language not listed reads with its first voice.
+    /// </summary>
+    public Dictionary<string, string> LocalSpeechVoices { get; set; } = new();
+
+    /// <summary>Speed and pitch per voice on this PC, keyed by <see cref="Services.LocalVoice.Id"/>.</summary>
+    public Dictionary<string, VoiceTuning> LocalSpeechTuning { get; set; } = new();
 
     /// <summary>
     /// The version that last started with this file, written at every start that finds a different

@@ -771,6 +771,21 @@
     <sys:String x:Key="S.Settings.Theme">Тема</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">Светлая</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">Темная</sys:String>
+    <sys:String x:Key="S.Settings.UiZoom">Масштаб интерфейса</sys:String>
+    <sys:String x:Key="S.Settings.TextSize">Размер текста</sys:String>
+    <sys:String x:Key="S.Settings.ZoomHint">Ctrl + плюс / минус / 0 или Ctrl + колесо мыши меняют масштаб окна; с Shift — размер текста.</sys:String>
+    <sys:String x:Key="S.Settings.Speech">Чтение вслух</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeech">Использовать голоса, установленные на этом ПК</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeechCheck">Голоса SAPI и Windows, без интернета. Языки без голоса на этом ПК читаются онлайн-голосом.</sys:String>
+    <sys:String x:Key="S.Settings.NoLocalVoices">На этом ПК не найдено голосов для языков OverTranslate.</sys:String>
+    <sys:String x:Key="S.Settings.VoiceAutomatic">Автоматически</sys:String>
+    <sys:String x:Key="S.Settings.Voice">Голос</sys:String>
+    <sys:String x:Key="S.Settings.VoiceSpeed">Скорость</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitch">Высота</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitchTip">Шаг 1 %; двойной щелчок — сброс</sys:String>
+    <sys:String x:Key="S.Settings.VoicePreview">Прослушать с этим голосом, скоростью и высотой</sys:String>
+    <sys:String x:Key="S.Settings.AddVoices">Добавить голоса…</sys:String>
+    <sys:String x:Key="S.Settings.AddVoicesHint">Язык появится здесь, как только для него будет установлен голос. Голоса Windows добавляются в «Параметры › Время и язык › Речь»; голоса SAPI других производителей тоже появятся.</sys:String>
     <sys:String x:Key="S.Settings.UiLanguage">Язык интерфейса</sys:String>
 
     <sys:String x:Key="S.Settings.Advanced">Дополнительно</sys:String>

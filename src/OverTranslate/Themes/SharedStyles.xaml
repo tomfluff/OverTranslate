@@ -7,6 +7,9 @@
     <!-- ═══════════════════════════════════════════ -->
     <FontFamily x:Key="AppFont">Segoe UI Variable Text, Segoe UI, Microsoft JhengHei UI, Sans-Serif</FontFamily>
     <sys:Double xmlns:sys="clr-namespace:System;assembly=mscorlib" x:Key="AppFontSize">13</sys:Double>
+    <!-- Defaults for what ZoomService puts at application level from the settings at startup. -->
+    <ScaleTransform x:Key="UiZoom" ScaleX="1" ScaleY="1"/>
+    <sys:Double xmlns:sys="clr-namespace:System;assembly=mscorlib" x:Key="TextBoxFontSize">14</sys:Double>
 
     <!-- ═══════════════════════════════════════════ -->
     <!--  SECTION HEADER                             -->
@@ -797,7 +800,7 @@
     <!-- Multi-line textbox (translation content area) -->
     <Style x:Key="MultilineTextBox" TargetType="TextBox">
         <Setter Property="FontFamily"              Value="{DynamicResource AppFont}"/>
-        <Setter Property="FontSize"                Value="14"/>
+        <Setter Property="FontSize"                Value="{DynamicResource TextBoxFontSize}"/>
         <Setter Property="Foreground"              Value="{DynamicResource AppTextPrimary}"/>
         <Setter Property="Background"              Value="{DynamicResource AppSurfaceBg}"/>
         <Setter Property="CaretBrush"              Value="{DynamicResource AppTextPrimary}"/>
@@ -819,6 +822,28 @@
                                       VerticalScrollBarVisibility="Auto"
                                       Focusable="False"/>
                     </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Read-only text that looks like plain text but can be selected with the mouse and copied,
+         the way a TextBlock cannot. The host is a Border rather than a ScrollViewer: a ScrollViewer
+         takes every wheel turn over the text, so the panel around it would stop scrolling there. -->
+    <Style x:Key="SelectableText" TargetType="TextBox">
+        <Setter Property="IsReadOnly"             Value="True"/>
+        <Setter Property="IsReadOnlyCaretVisible" Value="False"/>
+        <Setter Property="Background"             Value="Transparent"/>
+        <Setter Property="BorderThickness"        Value="0"/>
+        <Setter Property="Padding"                Value="0"/>
+        <Setter Property="TextWrapping"           Value="Wrap"/>
+        <Setter Property="Foreground"             Value="{DynamicResource AppTextPrimary}"/>
+        <Setter Property="SelectionBrush"         Value="{DynamicResource AppAccent}"/>
+        <Setter Property="FocusVisualStyle"       Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="PART_ContentHost" Background="{TemplateBinding Background}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

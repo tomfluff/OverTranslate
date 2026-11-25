@@ -90,6 +90,20 @@ public partial class App
         AppIdentityService.Initialize();
 
         ThemeService.Apply(SettingsService.Instance.Current.Theme);
+        ZoomService.Apply();
+        ZoomService.RegisterShortcuts();
+
+        // Triple-click selects all of a text box's text, in every window and popup — Quick Lookup's
+        // input and result, the dictionary, the translation boxes. WPF's TextBox selects a word on a
+        // double-click and has no triple.
+        EventManager.RegisterClassHandler(typeof(System.Windows.Controls.TextBox), UIElement.PreviewMouseLeftButtonDownEvent,
+            new System.Windows.Input.MouseButtonEventHandler((sender, e) =>
+            {
+                if (e.ClickCount != 3 || sender is not System.Windows.Controls.TextBox box) return;
+                box.Focus();
+                box.SelectAll();
+                e.Handled = true;
+            }));
 
         // Windows waits its mouse-hover time, 400ms, before a ToolTip comes up — long enough that
         // people decide there is nothing there and move on. Half of it is still long enough not to

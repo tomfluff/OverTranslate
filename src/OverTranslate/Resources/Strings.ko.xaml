@@ -779,6 +779,21 @@
     <sys:String x:Key="S.Settings.Theme">테마</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">라이트</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">다크</sys:String>
+    <sys:String x:Key="S.Settings.UiZoom">화면 확대/축소</sys:String>
+    <sys:String x:Key="S.Settings.TextSize">글자 크기</sys:String>
+    <sys:String x:Key="S.Settings.ZoomHint">Ctrl + 더하기/빼기/0 또는 Ctrl + 마우스 휠로 창을 확대/축소하고, Shift를 함께 누르면 글자 크기를 바꿉니다.</sys:String>
+    <sys:String x:Key="S.Settings.Speech">읽어 주기</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeech">이 PC에 설치된 음성 사용</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeechCheck">SAPI 및 Windows 음성으로 오프라인에서 읽습니다. 이 PC에 음성이 없는 언어는 온라인 음성으로 읽습니다.</sys:String>
+    <sys:String x:Key="S.Settings.NoLocalVoices">이 PC에서 OverTranslate가 지원하는 언어의 음성을 찾지 못했습니다.</sys:String>
+    <sys:String x:Key="S.Settings.VoiceAutomatic">자동</sys:String>
+    <sys:String x:Key="S.Settings.Voice">음성</sys:String>
+    <sys:String x:Key="S.Settings.VoiceSpeed">속도</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitch">높낮이</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitchTip">1% 단위로 조절, 두 번 클릭하면 초기화</sys:String>
+    <sys:String x:Key="S.Settings.VoicePreview">이 음성, 속도, 높낮이로 미리 듣기</sys:String>
+    <sys:String x:Key="S.Settings.AddVoices">음성 추가…</sys:String>
+    <sys:String x:Key="S.Settings.AddVoicesHint">언어의 음성을 설치하면 해당 언어가 여기에 표시됩니다. Windows 음성은 설정 › 시간 및 언어 › 음성에서 추가하며, 다른 회사의 SAPI 음성도 표시됩니다.</sys:String>
     <sys:String x:Key="S.Settings.UiLanguage">인터페이스 언어</sys:String>
 
     <sys:String x:Key="S.Settings.Advanced">고급 설정</sys:String>

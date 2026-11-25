@@ -208,6 +208,7 @@ public partial class SettingsPage : UserControl
         Loaded   += (_, _) =>
         {
             LocalizationService.LanguageChanged += OnLanguageChanged;
+            ZoomService.Changed += OnZoomChanged;
             SettingsService.Instance.OcrDebugChanged += OnOcrDebugChanged;
             SettingsService.Instance.CaptureOptionsChanged += OnCaptureOptionsChanged;
             OnOcrDebugChanged(this, EventArgs.Empty);
@@ -218,6 +219,8 @@ public partial class SettingsPage : UserControl
         Unloaded += (_, _) =>
         {
             LocalizationService.LanguageChanged -= OnLanguageChanged;
+            ZoomService.Changed -= OnZoomChanged;
+            _previewTts.Stop();
             SettingsService.Instance.OcrDebugChanged -= OnOcrDebugChanged;
             SettingsService.Instance.CaptureOptionsChanged -= OnCaptureOptionsChanged;
             UnsubscribeModels();
@@ -246,6 +249,13 @@ public partial class SettingsPage : UserControl
 
             LightThemeRadio.IsChecked = s.Theme != ThemeService.Dark;
             DarkThemeRadio.IsChecked  = s.Theme == ThemeService.Dark;
+
+            UiZoomBox.ItemsSource = ZoomService.Zooms.Select(z => new Choice(z, $"{z * 100:0}%")).ToList();
+            TextSizeBox.ItemsSource = ZoomService.TextSizes.Select(t => new Choice(t, $"{t:0}")).ToList();
+            ShowZoom();
+
+            LocalSpeechCheckBox.IsChecked = s.LocalSpeechEnabled;
+            BuildLocalVoiceRows(s);
 
             // LocalizationService.Current, not s.UiLanguage: an unset preference is showing the
             // system default right now, and the picker has to agree with what is on screen.
@@ -854,6 +864,210 @@ public partial class SettingsPage : UserControl
         var theme = DarkThemeRadio.IsChecked == true ? ThemeService.Dark : ThemeService.Light;
         ThemeService.Apply(theme);
         Persist(s => s.Theme = theme);
+    }
+
+    /// <summary>An entry of the zoom, text size and voice pickers; ModernComboBox shows <c>Display</c>.</summary>
+    private sealed record Choice(object Value, string Display);
+
+    private void ShowZoom()
+    {
+        var s = SettingsService.Instance.Current;
+        UiZoomBox.SelectedValue = s.UiZoom;
+        TextSizeBox.SelectedValue = s.TextBoxFontSize;
+    }
+
+    // Ctrl + Plus / Minus change these from anywhere in the window, this page included.
+    private void OnZoomChanged(object? sender, EventArgs e)
+    {
+        var loading = _loading;
+        _loading = true;
+        try { ShowZoom(); }
+        finally { _loading = loading; }
+    }
+
+    private void UiZoomBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loading || UiZoomBox.SelectedValue is not double zoom) return;
+        ZoomService.Set(zoom: zoom);
+        FlashSaved();
+    }
+
+    private void TextSizeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loading || TextSizeBox.SelectedValue is not double size) return;
+        ZoomService.Set(textSize: size);
+        FlashSaved();
+    }
+
+    // Windows installs its own voices from here; SAPI voices from other vendors come with their installers.
+    private void AddVoicesBtn_Click(object sender, RoutedEventArgs e)
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("ms-settings:speech") { UseShellExecute = true }); }
+        catch (Exception ex) { ShowError(ex.Message); }
+    }
+
+    private void LocalSpeech_Toggled(object sender, RoutedEventArgs e)
+    {
+        var on = LocalSpeechCheckBox.IsChecked == true;
+        LocalVoicesPanel.IsEnabled = on;
+        Persist(s => s.LocalSpeechEnabled = on);
+    }
+
+    private readonly TtsService _previewTts = new();
+
+    /// <summary>
+    /// A row for each language this PC has a voice for: the voice (自動 is its first), that voice's
+    /// speed and pitch, and a button that reads a sample with all three.
+    /// </summary>
+    private void BuildLocalVoiceRows(AppSettings s)
+    {
+        LocalSpeech.Refresh();
+        LocalVoicesPanel.Children.Clear();
+        LocalVoicesPanel.IsEnabled = s.LocalSpeechEnabled;
+        NoLocalVoicesHint.Visibility = LocalSpeech.Voices.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        if (LocalSpeech.Voices.Count == 0) return;
+
+        LocalVoicesPanel.Children.Add(VoiceRow(null, Header("S.Settings.Voice"), Header("S.Settings.VoiceSpeed"), Header("S.Settings.VoicePitch"), null));
+
+        foreach (var voices in LocalSpeech.Voices.GroupBy(v => v.Language))
+        {
+            var language = voices.Key;
+            var name = LanguageData.GetSourceDisplayName(voices.First().AppLanguage);
+
+            var voiceBox = Picker(name, voices.Select(v => new Choice(v.Id, v.Display))
+                .Prepend(new Choice("", LocalizationService.Get("S.Settings.VoiceAutomatic"))));
+            voiceBox.SelectedValue = s.LocalSpeechVoices.GetValueOrDefault(language, "");
+            if (voiceBox.SelectedValue == null) voiceBox.SelectedIndex = 0;   // a voice since uninstalled
+
+            var speedBox = Picker(LocalizationService.Get("S.Settings.VoiceSpeed"),
+                LocalSpeech.Rates.Select(r => new Choice(r, $"{r:0.##}×")));
+            var pitchSlider = new Slider
+            {
+                Style = (Style)FindResource("AppSlider"),
+                Minimum = -LocalSpeech.MaxPitch,
+                Maximum = LocalSpeech.MaxPitch,
+                SmallChange = 1,
+                LargeChange = 5,
+                TickFrequency = 1,
+                IsSnapToTickEnabled = true,
+                VerticalAlignment = VerticalAlignment.Center,
+                ToolTip = LocalizationService.Get("S.Settings.VoicePitchTip"),
+            };
+            System.Windows.Automation.AutomationProperties.SetName(pitchSlider, LocalizationService.Get("S.Settings.VoicePitch"));
+            var pitchValue = new TextBlock
+            {
+                Style = (Style)FindResource("FieldHint"),
+                Width = 38,
+                TextAlignment = TextAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            // Double-click puts it back to the voice's own pitch.
+            pitchSlider.MouseDoubleClick += (_, _) => pitchSlider.Value = 0;
+            var pitch = new DockPanel();
+            DockPanel.SetDock(pitchValue, Dock.Right);
+            pitch.Children.Add(pitchValue);
+            pitch.Children.Add(pitchSlider);
+
+            // Speed and pitch belong to the voice, so they show whichever one 自動 resolves to.
+            LocalVoice? Current() => LocalSpeech.VoiceFor(language);
+            void ShowTuning()
+            {
+                var tuning = Current() is { } voice ? LocalSpeech.TuningOf(voice) : new VoiceTuning();
+                var loading = _loading;
+                _loading = true;
+                speedBox.SelectedValue = tuning.Rate;
+                pitchSlider.Value = tuning.Pitch;
+                pitchValue.Text = PitchText(tuning.Pitch);
+                _loading = loading;
+            }
+
+            void SaveTuning()
+            {
+                if (_loading || Current() is not { } voice) return;
+                var tuning = new VoiceTuning(speedBox.SelectedValue as double? ?? 1, pitchSlider.Value);
+                Persist(x => x.LocalSpeechTuning[voice.Id] = tuning);
+            }
+
+            voiceBox.SelectionChanged += (_, _) =>
+            {
+                if (voiceBox.SelectedValue is not string id) return;
+                Persist(x =>
+                {
+                    if (id.Length == 0) x.LocalSpeechVoices.Remove(language);
+                    else x.LocalSpeechVoices[language] = id;
+                });
+                ShowTuning();
+            };
+            speedBox.SelectionChanged += (_, _) => SaveTuning();
+            pitchSlider.ValueChanged += (_, _) =>
+            {
+                pitchValue.Text = PitchText(pitchSlider.Value);
+                SaveTuning();
+            };
+            ShowTuning();
+
+            var preview = new Button
+            {
+                Content = "",   // Play
+                FontFamily = new System.Windows.Media.FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"),
+                Style = (Style)FindResource("IconButton"),
+                Height = 34,
+                ToolTip = LocalizationService.Get("S.Settings.VoicePreview"),
+            };
+            System.Windows.Automation.AutomationProperties.SetName(preview, LocalizationService.Get("S.Settings.VoicePreview"));
+            preview.Click += async (_, _) =>
+            {
+                if (Current() is not { } voice) return;
+                try { await _previewTts.PreviewAsync(voice, new System.Globalization.CultureInfo(voice.Culture).NativeName); }
+                catch (Exception ex) { ShowError(ex.Message); }
+            };
+
+            LocalVoicesPanel.Children.Add(VoiceRow(new TextBlock
+            {
+                Text = name,
+                Style = (Style)FindResource("OptionTitle"),
+                VerticalAlignment = VerticalAlignment.Center,
+            }, voiceBox, speedBox, pitch, preview));
+        }
+
+        static string PitchText(double percent) => percent == 0 ? "0%" : $"{percent:+0;-0}%";
+
+        TextBlock Header(string key) => new()
+        {
+            Text = LocalizationService.Get(key),
+            Style = (Style)FindResource("FieldHint"),
+            Margin = new Thickness(0, 0, 0, 4),
+        };
+
+        System.Windows.Controls.ComboBox Picker(string automationName, IEnumerable<Choice> items)
+        {
+            var box = new System.Windows.Controls.ComboBox
+            {
+                Style = (Style)FindResource("ModernComboBox"),
+                SelectedValuePath = nameof(Choice.Value),
+                ItemsSource = items.ToList(),
+            };
+            System.Windows.Automation.AutomationProperties.SetName(box, automationName);
+            return box;
+        }
+
+        static Grid VoiceRow(UIElement? label, UIElement voice, UIElement speed, UIElement pitch, UIElement? preview)
+        {
+            var row = new Grid { Margin = new Thickness(0, 0, 0, 6) };
+            foreach (var width in new[] { 110.0, -1, 84, 160, 40 })
+                row.ColumnDefinitions.Add(new ColumnDefinition
+                    { Width = width < 0 ? new GridLength(1, GridUnitType.Star) : new GridLength(width) });
+            UIElement?[] cells = [label, voice, speed, pitch, preview];
+            for (var i = 0; i < cells.Length; i++)
+            {
+                if (cells[i] is not FrameworkElement cell) continue;
+                Grid.SetColumn(cell, i);
+                if (i is 2 or 3) cell.Margin = new Thickness(6, cell.Margin.Top, 0, cell.Margin.Bottom);
+                if (i == 4) cell.Margin = new Thickness(6, 0, 0, 0);
+                row.Children.Add(cell);
+            }
+            return row;
+        }
     }
 
     private void UiLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

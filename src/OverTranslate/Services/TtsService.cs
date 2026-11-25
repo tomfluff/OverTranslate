@@ -1,6 +1,7 @@
 using System.IO;
 using System.Net.Http;
-using System.Windows.Media;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using OverTranslate.Services.Providers;
 using OverTranslate.Translation;
 using OverTranslate.Translation.Speech;
@@ -22,8 +23,14 @@ public class TtsService : IDisposable
     // service used. Microsoft and Bing are the same Azure voices by two routes, and between them
     // cover the one language the application offers that Google has no voice for (Slovenian).
     // Yandex, the old fifth, was dropped: nothing reached it that the four above could not read.
+    //
+    // The voices on this PC go first, and only take the languages they have a voice for while the
+    // setting is on (LocalSpeech.Supports); everything else still reads online.
+    private static readonly LocalSpeech Local = new();
+
     private static readonly SpeechSynthesizer Synthesizer = new(
     [
+        Local,
         new GoogleRpcSpeech(Http),
         new GoogleWebSpeech(Http),
         new MicrosoftSpeech(Http),
@@ -31,7 +38,6 @@ public class TtsService : IDisposable
     ]);
 
     private MediaPlayer? _player;
-    private string? _currentFile;
     private CancellationTokenSource? _cts;
     private bool _active;
 
@@ -42,51 +48,48 @@ public class TtsService : IDisposable
     public event EventHandler? StateChanged;
 
     /// <summary>
-    /// Creates the player on demand. A MediaPlayer that has raised MediaFailed cannot be trusted to
-    /// play again — depending on the error it can go silently dead, and then every later Open/Play on
-    /// that instance does nothing at all, which is exactly the "no sound until I reopen 取詞翻譯" the
-    /// user is left with. So a failed player is thrown away and the next request gets a fresh one.
+    /// Creates the player on demand. Windows.Media.Playback's player, not WPF's: WPF's MediaPlayer is
+    /// Windows Media Player underneath and fails with InvalidWmpVersionException on every press where
+    /// the optional "Windows Media Player Legacy" feature is not installed — the default on current
+    /// Windows 11. This one is Media Foundation, which every desktop edition has. A player that has
+    /// raised MediaFailed is still thrown away, as before, and the next request gets a fresh one.
     /// UI thread only.
     /// </summary>
     private MediaPlayer EnsurePlayer()
     {
         if (_player != null) return _player;
 
-        var player = new MediaPlayer();
-        // Natural end / playback error must flip the button back to "play".
-        player.MediaEnded += (_, _) =>
+        var player = new MediaPlayer { AudioCategory = MediaPlayerAudioCategory.Speech };
+        // A read-aloud is not a song: keep it off the media keys and out of the volume flyout.
+        player.CommandManager.IsEnabled = false;
+
+        // Both events arrive on a worker thread.
+        player.MediaEnded += (_, _) => OnUi(() =>
         {
             if (!ReferenceEquals(_player, player)) return;
-            // Close() releases the temp file, which the player holds open until its next Open().
-            player.Close();
-            DeleteCurrentFile();
+            player.Source = null;
             SetActive(false);
-        };
-        player.MediaFailed += (_, e) =>
+        });
+        player.MediaFailed += (_, e) => OnUi(() =>
         {
-            Log.Warn(e.ErrorException, "TTS playback failed, discarding player");
-            player.Close();
-            if (ReferenceEquals(_player, player))
-            {
-                _player = null;
-                DeleteCurrentFile();
-            }
+            Log.Warn(e.ExtendedErrorCode, "TTS playback failed ({Error}: {Message}), discarding player", e.Error, e.ErrorMessage);
+            if (ReferenceEquals(_player, player)) _player = null;
+            player.Dispose();
             SetActive(false);
-        };
+        });
 
         _player = player;
         return player;
     }
 
-    /// <summary>Stops playback and releases the file the player was holding. UI thread only.</summary>
+    private static void OnUi(Action action) => System.Windows.Application.Current?.Dispatcher.Invoke(action);
+
+    /// <summary>Stops playback. UI thread only.</summary>
     private void ClosePlayer()
     {
-        if (_player != null)
-        {
-            _player.Stop();
-            _player.Close();
-        }
-        DeleteCurrentFile();
+        if (_player == null) return;
+        _player.Pause();
+        _player.Source = null;
     }
 
     private void SetActive(bool value)
@@ -94,43 +97,6 @@ public class TtsService : IDisposable
         if (_active == value) return;
         _active = value;
         StateChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    private const string TempPrefix = "overtranslate_tts_";
-    private static int _staleFilesSwept;
-
-    /// <summary>
-    /// Every playback gets its own file: the player keeps the previous one open, and re-opening the
-    /// same path also runs into the media stack caching that URI.
-    /// </summary>
-    private static string NewTempFile() =>
-        Path.Combine(Path.GetTempPath(), $"{TempPrefix}{Guid.NewGuid():N}.mp3");
-
-    private void DeleteCurrentFile()
-    {
-        var file = Interlocked.Exchange(ref _currentFile, null);
-        if (file == null) return;
-        try { File.Delete(file); }
-        catch (Exception ex) { Log.Debug(ex, "Could not delete TTS temp file {File}", file); }
-    }
-
-    /// <summary>Removes files an earlier crash left behind. Old enough that no live player holds them.</summary>
-    private static void SweepStaleFilesOnce()
-    {
-        if (Interlocked.Exchange(ref _staleFilesSwept, 1) != 0) return;
-        try
-        {
-            var cutoff = DateTime.UtcNow - TimeSpan.FromHours(1);
-            foreach (var file in Directory.EnumerateFiles(Path.GetTempPath(), TempPrefix + "*.mp3"))
-            {
-                try
-                {
-                    if (File.GetLastWriteTimeUtc(file) < cutoff) File.Delete(file);
-                }
-                catch { /* still in use by another process, or already gone */ }
-            }
-        }
-        catch (Exception ex) { Log.Debug(ex, "TTS temp sweep failed"); }
     }
 
     /// <summary>Stops any in-flight fetch and playback.</summary>
@@ -141,19 +107,9 @@ public class TtsService : IDisposable
         SetActive(false);
     }
 
-    public async Task SpeakAsync(string text, string langCode)
+    public Task SpeakAsync(string text, string langCode)
     {
-        if (string.IsNullOrWhiteSpace(text)) return;
-
-        _cts?.Cancel();
-        _cts?.Dispose();
-        _cts = new CancellationTokenSource();
-        var token = _cts.Token;
-
-        System.Windows.Application.Current.Dispatcher.Invoke(ClosePlayer);
-        SetActive(true);
-
-        SweepStaleFilesOnce();
+        if (string.IsNullOrWhiteSpace(text)) return Task.CompletedTask;
 
         // The same codes translation speaks, so every language the pickers offer has its voice —
         // the old table knew fifteen and read the rest in English. 自動 is no language to read in;
@@ -162,25 +118,43 @@ public class TtsService : IDisposable
         if (language is null)
         {
             Log.Debug("TTS skipped: no language to read {Lang} in", langCode);
-            SetActive(false);
-            return;
+            return Task.CompletedTask;
         }
+
+        // The token reaches the request itself, so 停止 aborts the download rather than only
+        // discarding it when it arrives.
+        return PlayAsync(async token => (await Synthesizer.SynthesizeAsync(text, language, token)).Audio);
+    }
+
+    /// <summary>
+    /// Reads <paramref name="text"/> with <paramref name="voice"/> at its current speed and pitch,
+    /// whether or not voices on this PC are switched on — the settings page's preview.
+    /// </summary>
+    public Task PreviewAsync(LocalVoice voice, string text) =>
+        PlayAsync(token => Local.SynthesizeAsync(voice, text, token));
+
+    private async Task PlayAsync(Func<CancellationToken, Task<byte[]>> synthesize)
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = new CancellationTokenSource();
+        var token = _cts.Token;
+
+        System.Windows.Application.Current.Dispatcher.Invoke(ClosePlayer);
+        SetActive(true);
 
         try
         {
-            // The token reaches the request itself, so 停止 aborts the download rather than only
-            // discarding it when it arrives.
-            var (audio, _) = await Synthesizer.SynthesizeAsync(text, language, token);
+            var audio = await synthesize(token);
+            token.ThrowIfCancellationRequested();
 
-            var file = NewTempFile();
-            await File.WriteAllBytesAsync(file, audio, token);
+            // Online engines answer with MP3, the voices on this PC with WAV.
+            var contentType = audio.AsSpan().StartsWith("RIFF"u8) ? "audio/wav" : "audio/mpeg";
 
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                DeleteCurrentFile();
-                _currentFile = file;
                 var player = EnsurePlayer();
-                player.Open(new Uri(file));
+                player.Source = MediaSource.CreateFromStream(new MemoryStream(audio).AsRandomAccessStream(), contentType);
                 player.Play();
             });
         }
@@ -200,6 +174,11 @@ public class TtsService : IDisposable
     {
         _cts?.Cancel();
         _cts?.Dispose();
-        System.Windows.Application.Current.Dispatcher.Invoke(ClosePlayer);
+        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+        {
+            ClosePlayer();
+            _player?.Dispose();
+            _player = null;
+        });
     }
 }

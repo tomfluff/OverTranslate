@@ -154,7 +154,7 @@ public class DictionaryLookupTests
             .Select(attribute => attribute.Value)
             .ToList();
 
-        Assert.Contains("{Binding BackTranslationsText}", bindings);
+        Assert.Contains("{Binding BackTranslationsText, Mode=OneWay}", bindings);
         Assert.DoesNotContain("{Binding Examples}", bindings);
         Assert.DoesNotContain("{Binding DefinitionsText}", bindings);
         Assert.DoesNotContain("{Binding SynonymsText}", bindings);

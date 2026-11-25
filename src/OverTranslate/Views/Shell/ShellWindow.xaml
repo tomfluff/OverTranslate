@@ -124,7 +124,9 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <!-- The body, not the title bar: WindowChrome's CaptionHeight is fixed at 40, so a zoomed
+             title row would no longer line up with the strip that drags the window. -->
+        <Grid Grid.Row="1" LayoutTransform="{DynamicResource UiZoom}">
             <Grid.ColumnDefinitions>
                 <!-- 248 is sized to the 快速工具 rows, which are the widest thing the rail holds: a
                      label and its shortcut on one line. The width is fixed and the user's only

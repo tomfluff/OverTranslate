@@ -9,8 +9,7 @@
         Topmost="True"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        Width="644"
-        SizeToContent="Height"
+        SizeToContent="WidthAndHeight"
         UseLayoutRounding="True"
         TextOptions.TextFormattingMode="Display">
 
@@ -259,7 +258,11 @@
          the top of the screen during a drag. The window's Width carries the horizontal extra so the
          card itself does not shrink. -->
     <Grid Margin="26,0,26,30">
+        <!-- 592 wide, which with the shadow margin is the 644 the window used to be given: the width
+             lives on the card now so interface zoom (UiZoom) can grow it, and the window follows. -->
         <Border x:Name="Surface"
+                Width="592"
+                LayoutTransform="{DynamicResource UiZoom}"
                 Background="{DynamicResource AppSurfaceBg}"
                 BorderBrush="{DynamicResource AppBorder}"
                 BorderThickness="1"
@@ -525,16 +528,17 @@
                                      cut for different sizes, and Text is drawn for 8-16px. Windows
                                      10 has neither and falls through to Segoe UI, as the shared
                                      stack already does. -->
-                                <TextBlock x:Name="TranslatedText"
-                                           FontFamily="Segoe UI Variable Display, Segoe UI, Microsoft JhengHei UI, Sans-Serif"
-                                           FontSize="24"
-                                           FontWeight="SemiBold"
-                                           LineHeight="32"
-                                           TextOptions.TextFormattingMode="Ideal"
-                                           TextOptions.TextRenderingMode="ClearType"
-                                           Foreground="{DynamicResource AppTextPrimary}"
-                                           VerticalAlignment="Top"
-                                           TextWrapping="Wrap"/>
+                                <!-- Selectable, and set in the text size from settings rather than
+                                     stepped by length. -->
+                                <TextBox x:Name="TranslatedText"
+                                         Style="{StaticResource SelectableText}"
+                                         FontFamily="Segoe UI Variable Display, Segoe UI, Microsoft JhengHei UI, Sans-Serif"
+                                         FontSize="{DynamicResource TextBoxFontSize}"
+                                         FontWeight="SemiBold"
+                                         TextOptions.TextFormattingMode="Ideal"
+                                         TextOptions.TextRenderingMode="ClearType"
+                                         Foreground="{DynamicResource AppTextPrimary}"
+                                         VerticalAlignment="Top"/>
 
                             <TextBlock x:Name="StatusText"
                                        FontFamily="{DynamicResource AppFont}"
@@ -689,17 +693,16 @@
                                      off the row — see FitCompactTranslation, which sets that limit from
                                      the width actually on offer. -->
                                 <StackPanel x:Name="CompactTranslationRow" Orientation="Horizontal">
-                                    <TextBlock x:Name="CompactTranslatedText"
-                                               FontFamily="{DynamicResource AppFont}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"
-                                               LineHeight="20"
-                                               TextOptions.TextFormattingMode="Ideal"
-                                               Foreground="{Binding Foreground, ElementName=TranslatedText}"
-                                               Margin="0,5,0,0"
-                                               VerticalAlignment="Top"
-                                               TextWrapping="Wrap"
-                                               Visibility="Collapsed"/>
+                                    <TextBox x:Name="CompactTranslatedText"
+                                             Style="{StaticResource SelectableText}"
+                                             FontFamily="{DynamicResource AppFont}"
+                                             FontSize="{DynamicResource TextBoxFontSize}"
+                                             FontWeight="SemiBold"
+                                             TextOptions.TextFormattingMode="Ideal"
+                                             Foreground="{Binding Foreground, ElementName=TranslatedText}"
+                                             Margin="0,5,0,0"
+                                             VerticalAlignment="Top"
+                                             Visibility="Collapsed"/>
 
                                     <Button x:Name="CompactTgtTtsBtn"
                                             Style="{StaticResource HeaderIconButton}"
@@ -866,7 +869,28 @@
 
                             <Rectangle Height="1" Fill="{DynamicResource AppSeparator}" Margin="0,0,0,12"/>
 
-                            <!-- Wayfinding: this panel holds the two settings worth reaching without
+                            <!-- 文字大小: the same setting as in 設定, which the translation here is set in. -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="{DynamicResource S.Settings.TextSize}"
+                                           Style="{StaticResource SettingRowLabel}"
+                                           VerticalAlignment="Center"/>
+                                <ComboBox x:Name="TextSizeBox"
+                                          Grid.Column="1"
+                                          Width="96"
+                                          Style="{StaticResource ModernComboBox}"
+                                          AutomationProperties.Name="{DynamicResource S.Settings.TextSize}"
+                                          SelectedValuePath="Value"
+                                          SelectionChanged="TextSizeBox_SelectionChanged"/>
+                            </Grid>
+
+                            <Rectangle Height="1" Fill="{DynamicResource AppSeparator}" Margin="0,0,0,12"/>
+
+                            <!-- Wayfinding: this panel holds the few settings worth reaching without
                                  leaving the popup, and this line is how the reader gets to the rest
                                  of them rather than concluding there are none. -->
                             <Grid>

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Visibility="Collapsed">
     <UserControl.Resources>
-        <Style x:Key="OptionalDictionaryText" TargetType="TextBlock">
+        <!-- Selectable, copyable text (SelectableText) that collapses when there is none. -->
+        <Style x:Key="OptionalSelectableText" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
             <Setter Property="Visibility" Value="Visible"/>
             <Style.Triggers>
                 <Trigger Property="Text" Value="">
@@ -102,15 +103,15 @@
                            FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource AppTextSecondary}"/>
-                <TextBlock Text="{Binding Headword}"
-                           Style="{StaticResource OptionalDictionaryText}"
+                <TextBox Text="{Binding Headword, Mode=OneWay}"
+                           Style="{StaticResource OptionalSelectableText}"
                            FontFamily="{DynamicResource AppFont}"
                            FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource AppTextPrimary}"
                            Margin="8,0,0,0"/>
-                <TextBlock Text="{Binding Pronunciation}"
-                           Style="{StaticResource OptionalDictionaryText}"
+                <TextBox Text="{Binding Pronunciation, Mode=OneWay}"
+                           Style="{StaticResource OptionalSelectableText}"
                            FontFamily="{DynamicResource AppFont}"
                            FontSize="11"
                            Foreground="{DynamicResource AppTextSecondary}"
@@ -159,22 +160,23 @@
 
                                         <StackPanel Grid.Column="1">
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Text}"
+                                                <TextBox Text="{Binding Text, Mode=OneWay}"
+                                                           Style="{StaticResource SelectableText}"
                                                            FontFamily="{DynamicResource AppFont}"
                                                            FontSize="15"
                                                            FontWeight="SemiBold"
                                                            Foreground="{DynamicResource AppTextPrimary}"
                                                            TextWrapping="Wrap"/>
-                                                <TextBlock Text="{Binding Transliteration}"
-                                                           Style="{StaticResource OptionalDictionaryText}"
+                                                <TextBox Text="{Binding Transliteration, Mode=OneWay}"
+                                                           Style="{StaticResource OptionalSelectableText}"
                                                            FontFamily="{DynamicResource AppFont}"
                                                            FontSize="11"
                                                            Foreground="{DynamicResource AppTextSecondary}"
                                                            Margin="7,3,0,0"/>
                                             </StackPanel>
 
-                                            <TextBlock Text="{Binding BackTranslationsText}"
-                                                       Style="{StaticResource OptionalDictionaryText}"
+                                            <TextBox Text="{Binding BackTranslationsText, Mode=OneWay}"
+                                                       Style="{StaticResource OptionalSelectableText}"
                                                        FontFamily="{DynamicResource AppFont}"
                                                        FontSize="11"
                                                        Foreground="{DynamicResource AppTextSecondary}"

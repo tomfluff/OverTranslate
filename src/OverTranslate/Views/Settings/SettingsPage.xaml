@@ -563,6 +563,38 @@
                                                  Margin="0"
                                                  Checked="ThemeRadio_Checked"/>
                                 </StackPanel>
+                                <!-- 介面縮放 and 文字大小, side by side: two of the same kind of choice. -->
+                                <Grid Margin="0,14,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{DynamicResource S.Settings.UiZoom}"
+                                                   Style="{StaticResource FieldLabel}"
+                                                   Margin="0,0,0,7"/>
+                                        <ComboBox x:Name="UiZoomBox"
+                                                  Style="{StaticResource ModernComboBox}"
+                                                  AutomationProperties.Name="{DynamicResource S.Settings.UiZoom}"
+                                                  SelectedValuePath="Value"
+                                                  SelectionChanged="UiZoomBox_SelectionChanged"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="{DynamicResource S.Settings.TextSize}"
+                                                   Style="{StaticResource FieldLabel}"
+                                                   Margin="0,0,0,7"/>
+                                        <ComboBox x:Name="TextSizeBox"
+                                                  Style="{StaticResource ModernComboBox}"
+                                                  AutomationProperties.Name="{DynamicResource S.Settings.TextSize}"
+                                                  SelectedValuePath="Value"
+                                                  SelectionChanged="TextSizeBox_SelectionChanged"/>
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock Text="{DynamicResource S.Settings.ZoomHint}"
+                                           Style="{StaticResource FieldHint}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,6,0,0"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2">
                                 <!-- A heading over the ticks as 介面語言 and 主題 have over theirs: general,
@@ -652,6 +684,56 @@
                                                    Click="OpenScreenshotFolderBtn_Click"/>
                                     </Grid>
                                 </Grid>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 朗讀. Under both columns: the voice rows are as many as the PC has
+                             languages for, and would make one column much longer than the other. -->
+                        <TextBlock Text="{DynamicResource S.Settings.Speech}"
+                                   Style="{StaticResource FieldLabel}"
+                                   Margin="0,18,0,7"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox  Grid.Column="0" x:Name="LocalSpeechCheckBox"
+                                       Style="{StaticResource ModernCheckBox}"
+                                       VerticalAlignment="Top"
+                                       ToolTip="{DynamicResource S.Settings.LocalSpeech}"
+                                       Checked="LocalSpeech_Toggled"
+                                       Unchecked="LocalSpeech_Toggled"/>
+                            <TextBlock Grid.Column="1" Text="&#xE767;" Style="{StaticResource OptionGlyph}"/>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{DynamicResource S.Settings.LocalSpeech}"
+                                           Style="{StaticResource OptionTitle}"/>
+                                <TextBlock Text="{DynamicResource S.Settings.LocalSpeechCheck}"
+                                           Style="{StaticResource OptionDescription}"/>
+                                <TextBlock x:Name="NoLocalVoicesHint"
+                                           Text="{DynamicResource S.Settings.NoLocalVoices}"
+                                           Style="{StaticResource OptionDescription}"
+                                           Visibility="Collapsed"/>
+                                <!-- One row per language this PC has a voice for, built in code. -->
+                                <StackPanel x:Name="LocalVoicesPanel" Margin="0,8,0,0" Width="740" HorizontalAlignment="Left"/>
+                                <!-- No "add language" row: a row is a language this PC has a voice for,
+                                     so installing the voice is what adds one. They are listed afresh
+                                     every time this page is shown. -->
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <Button Content="{DynamicResource S.Settings.AddVoices}"
+                                            Style="{StaticResource FlatButton}"
+                                            Height="30"
+                                            MinWidth="96"
+                                            VerticalAlignment="Center"
+                                            Cursor="Hand"
+                                            Click="AddVoicesBtn_Click"/>
+                                    <TextBlock Text="{DynamicResource S.Settings.AddVoicesHint}"
+                                               Style="{StaticResource FieldHint}"
+                                               TextWrapping="Wrap"
+                                               MaxWidth="520"
+                                               VerticalAlignment="Center"
+                                               Margin="12,0,0,0"/>
+                                </StackPanel>
                             </StackPanel>
                         </Grid>
                     </StackPanel>

@@ -47,12 +47,13 @@ public class QuickLookupWindowMarkupTests
     /// <summary>
     /// Height follows the content because the popup has three sizes — a bare box, a translation, the
     /// settings panel — and the one thing it must not do is reserve room for the tallest of them
-    /// over somebody else's screen.
+    /// over somebody else's screen. Width follows too, from the card's fixed width, so interface
+    /// zoom can grow the window with it.
     /// </summary>
     [Fact]
     public void The_popup_is_only_as_tall_as_what_it_is_showing()
     {
-        Assert.Equal("Height", (string?)Window().Root!.Attribute("SizeToContent"));
+        Assert.Equal("WidthAndHeight", (string?)Window().Root!.Attribute("SizeToContent"));
     }
 
     /// <summary>
@@ -78,12 +79,12 @@ public class QuickLookupWindowMarkupTests
             .Descendants()
             .Single(e => (string?)e.Attribute(X + "Name") == "CompactTranslatedText");
 
-        Assert.Equal("Wrap", (string?)result.Attribute("TextWrapping"));
+        // SelectableText wraps; the size is the one chosen in settings.
+        Assert.Equal("{StaticResource SelectableText}", (string?)result.Attribute("Style"));
         Assert.Null((string?)result.Attribute("MaxWidth"));
         Assert.Null((string?)result.Attribute("TextTrimming"));
-        Assert.Equal("14", (string?)result.Attribute("FontSize"));
+        Assert.Equal("{DynamicResource TextBoxFontSize}", (string?)result.Attribute("FontSize"));
         Assert.Equal("SemiBold", (string?)result.Attribute("FontWeight"));
-        Assert.Equal("20", (string?)result.Attribute("LineHeight"));
         Assert.Equal("Ideal", (string?)result.Attribute("TextOptions.TextFormattingMode"));
         Assert.Equal("0,5,0,0", (string?)result.Attribute("Margin"));
         Assert.Equal("Top", (string?)result.Attribute("VerticalAlignment"));
@@ -169,24 +170,19 @@ public class QuickLookupWindowMarkupTests
     }
 
     /// <summary>
-    /// The full result steps its translation down as it grows: a glance-sized line stays large, a
-    /// paragraph gets smaller, and nothing goes below the compact view's size.
+    /// Both results read in the one text size chosen in settings — not stepped down by length — and
+    /// can be selected and copied like any text field.
     /// </summary>
-    [Theory]
-    [InlineData(0, 24, 32)]
-    [InlineData(3, 24, 32)]
-    [InlineData(4, 19, 27)]
-    [InlineData(6, 19, 27)]
-    [InlineData(7, 16, 24)]
-    [InlineData(200, 16, 24)]
-    public void The_full_translation_steps_down_by_how_many_lines_it_runs_to(
-        int lines, double size, double lineHeight)
+    [Fact]
+    public void The_translation_is_selectable_text_in_the_chosen_size()
     {
-        var style = OverTranslate.Views.QuickLookup.QuickLookupWindow.TranslatedTextStyle(lines);
-
-        Assert.Equal(size, style.Size);
-        Assert.Equal(lineHeight, style.LineHeight);
-        Assert.True(style.Size > 14);
+        foreach (var name in new[] { "TranslatedText", "CompactTranslatedText" })
+        {
+            var element = Window().Descendants().Single(e => (string?)e.Attribute(X + "Name") == name);
+            Assert.Equal("TextBox", element.Name.LocalName);
+            Assert.Equal("{StaticResource SelectableText}", (string?)element.Attribute("Style"));
+            Assert.Equal("{DynamicResource TextBoxFontSize}", (string?)element.Attribute("FontSize"));
+        }
     }
 
     /// <summary>The compact speech button is centered on the first line box, independent of script glyph size.</summary>
@@ -198,7 +194,6 @@ public class QuickLookupWindowMarkupTests
             .Descendants()
             .Single(e => (string?)e.Attribute(X + "Name") == name);
 
-        Assert.Equal("20", (string?)Element("CompactTranslatedText").Attribute("LineHeight"));
         Assert.Equal("0,5,0,0", (string?)Element("CompactTranslatedText").Attribute("Margin"));
         Assert.Equal("8,0,0,0", (string?)Element("CompactTgtTtsBtn").Attribute("Margin"));
     }

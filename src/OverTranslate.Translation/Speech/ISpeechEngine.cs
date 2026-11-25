@@ -1,6 +1,6 @@
 namespace OverTranslate.Translation.Speech;
 
-/// <summary>An engine that reads a text aloud: one text in, one MP3 out.</summary>
+/// <summary>An engine that reads a text aloud: one text in, one MP3 (or, from a voice on the PC, WAV) out.</summary>
 /// <remarks>
 /// <para>Nothing like <see cref="ITextTranslator"/> apart from the endpoints behind it. There is
 /// no list to pack, no group to fall back per, no answer to line up with its question: a user
@@ -22,7 +22,7 @@ public interface ISpeechEngine
     /// </summary>
     bool Supports(string language);
 
-    /// <returns>The speech as MP3.</returns>
+    /// <returns>The speech as MP3, or WAV.</returns>
     /// <exception cref="TranslationEngineException">The engine failed or answered with something unusable.</exception>
     /// <exception cref="OperationCanceledException">The token was cancelled; requests in flight are aborted.</exception>
     Task<byte[]> SynthesizeAsync(string text, string language, CancellationToken cancellationToken = default);

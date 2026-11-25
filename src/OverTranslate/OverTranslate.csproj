@@ -121,5 +121,7 @@
     <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.27.0" ExcludeAssets="all" />
     <PackageReference Include="Velopack" Version="1.2.0" />
+    <!-- SAPI 5 voices for reading aloud on this PC (Services/LocalSpeech.cs). -->
+    <PackageReference Include="System.Speech" Version="8.0.0" />
   </ItemGroup>
 </Project>

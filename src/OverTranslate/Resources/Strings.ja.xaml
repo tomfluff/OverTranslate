@@ -779,6 +779,21 @@
     <sys:String x:Key="S.Settings.Theme">テーマ</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">ライト</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">ダーク</sys:String>
+    <sys:String x:Key="S.Settings.UiZoom">表示の拡大率</sys:String>
+    <sys:String x:Key="S.Settings.TextSize">文字サイズ</sys:String>
+    <sys:String x:Key="S.Settings.ZoomHint">Ctrl + プラス／マイナス／0 または Ctrl + マウスホイールでウィンドウを拡大縮小します。Shift を加えると文字サイズを変更します。</sys:String>
+    <sys:String x:Key="S.Settings.Speech">読み上げ</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeech">この PC にインストールされた音声を使う</sys:String>
+    <sys:String x:Key="S.Settings.LocalSpeechCheck">SAPI と Windows の音声でオフライン読み上げ。この PC に音声がない言語はオンライン音声で読み上げます。</sys:String>
+    <sys:String x:Key="S.Settings.NoLocalVoices">OverTranslate が対応する言語の音声がこの PC に見つかりません。</sys:String>
+    <sys:String x:Key="S.Settings.VoiceAutomatic">自動</sys:String>
+    <sys:String x:Key="S.Settings.Voice">音声</sys:String>
+    <sys:String x:Key="S.Settings.VoiceSpeed">速さ</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitch">高さ</sys:String>
+    <sys:String x:Key="S.Settings.VoicePitchTip">1% 単位で調整、ダブルクリックで元に戻す</sys:String>
+    <sys:String x:Key="S.Settings.VoicePreview">この音声・速さ・高さで試聴</sys:String>
+    <sys:String x:Key="S.Settings.AddVoices">音声を追加…</sys:String>
+    <sys:String x:Key="S.Settings.AddVoicesHint">言語の音声をインストールすると、その言語がここに表示されます。Windows の音声は「設定 › 時刻と言語 › 音声認識」で追加でき、他社の SAPI 音声も表示されます。</sys:String>
     <sys:String x:Key="S.Settings.UiLanguage">表示言語</sys:String>
 
     <sys:String x:Key="S.Settings.Advanced">詳細設定</sys:String>

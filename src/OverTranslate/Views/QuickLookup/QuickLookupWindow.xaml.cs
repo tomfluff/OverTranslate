@@ -326,7 +326,6 @@ public partial class QuickLookupWindow : Window
     {
         InitializeComponent();
         SourceTextBox.MaxLength = SourceTextLimit.MaxLength;
-        TranslatedText.SizeChanged += TranslatedText_SizeChanged;
         _resultsCollapsed = SettingsService.Instance.Current.QuickLookup.ResultsCollapsed;
 
         _debounce = new DispatcherTimer { Interval = DebounceDelay };
@@ -1218,77 +1217,20 @@ public partial class QuickLookupWindow : Window
         ShowResult();
     }
 
-    /// <summary>How the full result's translation is set, by how many lines it runs to at full size.</summary>
-    /// <remarks>
-    /// <para>24px is for a word or a sentence, read at a glance; a paragraph at that size is a wall
-    /// the eye has to climb. Lines rather than characters decide it, because a CJK character takes
-    /// about twice the width of a Latin letter and a count would shrink one script too early and the
-    /// other too late.</para>
-    ///
-    /// <para>Steps rather than a continuous scale, because the popup re-translates as the user types:
-    /// a size that followed the length would breathe on every keystroke. The floor is still a size
-    /// above the compact view's 14, which is what keeps the expanded view the one to read in. The
-    /// weight stays semibold throughout, as the compact view's does at its smaller size.</para>
-    /// </remarks>
-    internal static (double Size, double LineHeight) TranslatedTextStyle(int fullSizeLines) =>
-        fullSizeLines switch
-        {
-            <= 3 => (24, 32),
-            <= 6 => (19, 27),
-            _ => (16, 24),
-        };
-
-    private readonly Layout.WrappedTextMeasure _wrappedMeasure = new();
-    private double _translatedTextStyledWidth = -1;
-    private string? _translatedTextStyledFor;
-
     // The language TranslatedText is in — the target it was asked for, which under 雙語互譯 is
-    // whichever of the pair the text resolved to. Only a Persian one is ever set right to left.
+    // whichever of the pair the text resolved to. Only a right-to-left one is ever set that way.
     private string? _translatedTextLanguage;
 
-    private void TranslatedText_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (e.WidthChanged) StyleTranslatedText();
-    }
-
     /// <summary>
-    /// Counts the lines the translation would take at full size, in the width it actually has, and
-    /// sets the step that count calls for — see <see cref="TranslatedTextStyle"/>.
+    /// Sets the translation's direction — a Persian or Hebrew translation is set right to left and
+    /// starts at the panel's right edge (see Layout.TextDirection).
     /// </summary>
-    private void StyleTranslatedText()
-    {
-        var text = TranslatedText.Text;
-
-        // First, because the line count below is measured in it: a Persian translation is set right
-        // to left and starts at the panel's right edge — see Layout.TextDirection.
-        TranslatedText.FlowDirection = Layout.TextDirection.Of(text, _translatedTextLanguage);
-
-        var width = TranslatedText.ActualWidth;
-        if (width <= 0) return;   // Not laid out yet; SizeChanged brings it back once it is.
-        if (text == _translatedTextStyledFor && Math.Abs(width - _translatedTextStyledWidth) < 0.5) return;
-
-        _translatedTextStyledFor = text;
-        _translatedTextStyledWidth = width;
-
-        var (fullSize, fullLineHeight) = TranslatedTextStyle(0);
-        var lines = 0;
-        if (text.Length > 0)
-        {
-            // Measured the way the TextBlock breaks it, not by FormattedText — see WrappedTextMeasure.
-            var measured = _wrappedMeasure.Measure(
-                text,
-                new Typeface(TranslatedText.FontFamily, TranslatedText.FontStyle, TranslatedText.FontWeight, TranslatedText.FontStretch),
-                fullSize,
-                width,
-                fullLineHeight,
-                TranslatedText.FlowDirection);
-            lines = (int)Math.Round(measured.Height / fullLineHeight);
-        }
-
-        var (size, lineHeight) = TranslatedTextStyle(lines);
-        TranslatedText.FontSize = size;
-        TranslatedText.LineHeight = lineHeight;
-    }
+    /// <remarks>
+    /// The size is no longer stepped down by length: both views read in the one text size chosen in
+    /// settings (TextBoxFontSize, also offered in this popup's own settings panel), so it stays put.
+    /// </remarks>
+    private void StyleTranslatedText() =>
+        TranslatedText.FlowDirection = Layout.TextDirection.Of(TranslatedText.Text, _translatedTextLanguage);
 
     /// <summary>
     /// The compact panel's side margins, plus the speech button's width and the gap before it.
@@ -1526,6 +1468,12 @@ public partial class QuickLookupWindow : Window
 
     private void SettingsBtn_Click(object sender, RoutedEventArgs e) => ShowSettings(!_settingsOpen);
 
+    private void TextSizeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressAuto || TextSizeBox.SelectedValue is not double size) return;
+        ZoomService.Set(textSize: size);
+    }
+
     private void CollapseBtn_Click(object sender, RoutedEventArgs e)
     {
         _resultsCollapsed = !_resultsCollapsed;
@@ -1636,6 +1584,8 @@ public partial class QuickLookupWindow : Window
         // to a service this list was built without — or away from a hidden one it was built with.
         BindProviderBox(settings.Provider);
         AutoCopyToggle.IsChecked = settings.QuickLookup.AutoCopyTranslation;
+        TextSizeBox.ItemsSource ??= ZoomService.TextSizes.Select(t => new { Value = t, Display = $"{t:0}" }).ToList();
+        TextSizeBox.SelectedValue = settings.TextBoxFontSize;
         MultilineInputToggle.IsChecked = settings.QuickLookup.MultilineInput;
         ApplyLineMode(settings.QuickLookup.MultilineInput);
 
