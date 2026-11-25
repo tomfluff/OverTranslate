@@ -140,16 +140,17 @@ public sealed class LocalSpeech : ISpeechEngine
             return;
 
         // Chunks are an id, a size and the data, padded to an even length.
-        for (long at = 12; at + 20 <= wav.Length; at += (8L + BitConverter.ToUInt32(wav, (int)at + 4) + 1) & ~1L)
+        for (long at = 12; at + 22 <= wav.Length; at += (8L + BitConverter.ToUInt32(wav, (int)at + 4) + 1) & ~1L)
         {
             if (!wav.AsSpan((int)at, 4).SequenceEqual("fmt "u8)) continue;
-            Scale((int)at + 12);   // sample rate
-            Scale((int)at + 16);   // byte rate
+            // The byte rate is derived, not scaled on its own: rounded separately, the two disagree by
+            // a byte and the header no longer says sample rate × block align.
+            var sampleRate = (uint)Math.Round(BitConverter.ToUInt32(wav, (int)at + 12) * factor);
+            var blockAlign = BitConverter.ToUInt16(wav, (int)at + 20);
+            BitConverter.TryWriteBytes(wav.AsSpan((int)at + 12, 4), sampleRate);
+            BitConverter.TryWriteBytes(wav.AsSpan((int)at + 16, 4), sampleRate * blockAlign);
             return;
         }
-
-        void Scale(int offset) => BitConverter.TryWriteBytes(wav.AsSpan(offset, 4),
-            (uint)Math.Round(BitConverter.ToUInt32(wav, offset) * factor));
     }
 
     private static IReadOnlyList<LocalVoice> ListVoices()

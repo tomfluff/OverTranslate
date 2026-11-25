@@ -34,4 +34,21 @@ public class LocalSpeechTests
         Assert.Equal(20000u, BitConverter.ToUInt32(bytes, fmt + 12));
         Assert.Equal(40000u, BitConverter.ToUInt32(bytes, fmt + 16));
     }
+
+    // A 1% shift of 22050 Hz rounds; the byte rate must follow the rounded rate, not round on its own.
+    [Fact]
+    public void ScaleSampleRate_keeps_byte_rate_equal_to_rate_times_block_align()
+    {
+        var bytes = new byte[44];
+        "RIFF"u8.CopyTo(bytes); "WAVE"u8.CopyTo(bytes.AsSpan(8)); "fmt "u8.CopyTo(bytes.AsSpan(12));
+        BitConverter.TryWriteBytes(bytes.AsSpan(16), 16u);
+        BitConverter.TryWriteBytes(bytes.AsSpan(24), 22050u);
+        BitConverter.TryWriteBytes(bytes.AsSpan(28), 44100u);
+        BitConverter.TryWriteBytes(bytes.AsSpan(32), (ushort)2);
+
+        LocalSpeech.ScaleSampleRate(bytes, 1.01);
+
+        var rate = BitConverter.ToUInt32(bytes, 24);
+        Assert.Equal(rate * 2, BitConverter.ToUInt32(bytes, 28));
+    }
 }

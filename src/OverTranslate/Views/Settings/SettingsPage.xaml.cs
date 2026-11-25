@@ -1054,9 +1054,12 @@ public partial class SettingsPage : UserControl
         static Grid VoiceRow(UIElement? label, UIElement voice, UIElement speed, UIElement pitch, UIElement? preview)
         {
             var row = new Grid { Margin = new Thickness(0, 0, 0, 6) };
+            // The voice column takes what is left, up to a readable width, so the row fits the window
+            // at its minimum size and at any zoom instead of running off the right edge.
             foreach (var width in new[] { 110.0, -1, 84, 160, 40 })
-                row.ColumnDefinitions.Add(new ColumnDefinition
-                    { Width = width < 0 ? new GridLength(1, GridUnitType.Star) : new GridLength(width) });
+                row.ColumnDefinitions.Add(width < 0
+                    ? new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 140, MaxWidth = 360 }
+                    : new ColumnDefinition { Width = new GridLength(width) });
             UIElement?[] cells = [label, voice, speed, pitch, preview];
             for (var i = 0; i < cells.Length; i++)
             {
@@ -1725,6 +1728,7 @@ public partial class SettingsPage : UserControl
         StopRecording();
 
         _recording = field;
+        ZoomService.Suspended = true;   // Ctrl+Plus/Minus/0 are shortcuts to record here, not zoom
         field.Box.Text = LocalizationService.Get("S.Settings.HotkeyPromptAnyInput");
         field.Box.ClearValue(System.Windows.Controls.Control.ForegroundProperty);
         if (field.ClearButton is { } clear) clear.Visibility = Visibility.Collapsed;
@@ -1757,6 +1761,7 @@ public partial class SettingsPage : UserControl
 
         ShowStoredShortcut(field, SettingsService.Instance.Current);
         _recording = null;
+        ZoomService.Suspended = false;
 
         // The box asks to be pressed by being focused, so it has to stop being focused once it has
         // been: a box left carrying the focus ring after the shortcut is taken reads as still

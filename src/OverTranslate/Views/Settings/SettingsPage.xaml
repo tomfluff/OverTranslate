@@ -715,7 +715,7 @@
                                            Style="{StaticResource OptionDescription}"
                                            Visibility="Collapsed"/>
                                 <!-- One row per language this PC has a voice for, built in code. -->
-                                <StackPanel x:Name="LocalVoicesPanel" Margin="0,8,0,0" Width="740" HorizontalAlignment="Left"/>
+                                <StackPanel x:Name="LocalVoicesPanel" Margin="0,8,0,0"/>
                                 <!-- No "add language" row: a row is a language this PC has a voice for,
                                      so installing the voice is what adds one. They are listed afresh
                                      every time this page is shown. -->

@@ -76,7 +76,10 @@ public static class ZoomService
         EventManager.RegisterClassHandler(typeof(Window), Mouse.PreviewMouseWheelEvent, new MouseWheelEventHandler(OnWheel));
     }
 
-    private static bool Zoomable(object sender) => sender is ShellWindow or QuickLookupWindow;
+    /// <summary>Set while Settings records a shortcut, which may well be one of these keys.</summary>
+    public static bool Suspended { get; set; }
+
+    private static bool Zoomable(object sender) => !Suspended && sender is ShellWindow or QuickLookupWindow;
 
     private static void OnKeyDown(object sender, KeyEventArgs e)
     {

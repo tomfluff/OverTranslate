@@ -375,7 +375,7 @@ public partial class QuickLookupWindow : Window
         foreach (var picker in new[]
                  {
                      SrcLangBox, TgtLangBox, ProviderBox,
-                     BilingualFirstBox, BilingualSecondBox
+                     BilingualFirstBox, BilingualSecondBox, TextSizeBox
                  })
         {
             picker.DropDownOpened += (_, _) => _dropDownOpen = true;
