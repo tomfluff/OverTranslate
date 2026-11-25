@@ -1058,10 +1058,12 @@ public partial class SettingsPage : UserControl
             var row = new Grid { Margin = new Thickness(0, 0, 0, 6) };
             // The voice column takes what is left, up to a readable width, so the row fits the window
             // at its minimum size and at any zoom instead of running off the right edge.
-            foreach (var width in new[] { 110.0, -1, 84, 160, 40 })
-                row.ColumnDefinitions.Add(width < 0
-                    ? new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 140, MaxWidth = 360 }
-                    : new ColumnDefinition { Width = new GridLength(width) });
+            // The pitch slider gives way too, down to a width it can still be dragged in.
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star), MinWidth = 120, MaxWidth = 360 });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(84) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 100, MaxWidth = 160 });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
             UIElement?[] cells = [label, voice, speed, pitch, preview];
             for (var i = 0; i < cells.Length; i++)
             {

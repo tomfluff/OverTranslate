@@ -531,13 +531,19 @@
                             <TextBlock Text="{DynamicResource S.Settings.General}"
                                        Style="{StaticResource CardTitle}"/>
                         </StackPanel>
-                        <Grid>
+                        <!-- Two columns where they fit, one above the other where they do not - see
+                             LayoutGeneral, which does the same for this as LayoutModels does below. -->
+                        <Grid x:Name="GeneralGrid" SizeChanged="GeneralGrid_SizeChanged">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="28"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel x:Name="GeneralLeft" Grid.Column="0">
                                 <TextBlock Text="{DynamicResource S.Settings.UiLanguage}"
                                            Style="{StaticResource FieldLabel}"
                                            Margin="0,0,0,7"/>
@@ -550,24 +556,28 @@
                                 <TextBlock Text="{DynamicResource S.Settings.Theme}"
                                            Style="{StaticResource FieldLabel}"
                                            Margin="0,14,0,7"/>
-                                <StackPanel Orientation="Horizontal">
+                                <!-- Wraps when the column is narrow; the 8 under each is the gap between
+                                     rows then, taken back by the panel's own margin. -->
+                                <WrapPanel Margin="0,0,0,-8">
                                     <RadioButton x:Name="SystemThemeRadio"
                                                  Content="{DynamicResource S.Settings.ThemeSystem}"
                                                  GroupName="ThemeGroup"
                                                  Style="{StaticResource ThemeRadioButton}"
+                                                 Margin="0,0,8,8"
                                                  Checked="ThemeRadio_Checked"/>
                                     <RadioButton x:Name="LightThemeRadio"
                                                  Content="{DynamicResource S.Settings.ThemeLight}"
                                                  GroupName="ThemeGroup"
                                                  Style="{StaticResource ThemeRadioButton}"
+                                                 Margin="0,0,8,8"
                                                  Checked="ThemeRadio_Checked"/>
                                     <RadioButton x:Name="DarkThemeRadio"
                                                  Content="{DynamicResource S.Settings.ThemeDark}"
                                                  GroupName="ThemeGroup"
                                                  Style="{StaticResource ThemeRadioButton}"
-                                                 Margin="0"
+                                                 Margin="0,0,0,8"
                                                  Checked="ThemeRadio_Checked"/>
-                                </StackPanel>
+                                </WrapPanel>
                                 <!-- 介面縮放 and 文字大小, side by side: two of the same kind of choice. -->
                                 <Grid Margin="0,14,0,0">
                                     <Grid.ColumnDefinitions>
@@ -601,7 +611,7 @@
                                            TextWrapping="Wrap"
                                            Margin="0,6,0,0"/>
                             </StackPanel>
-                            <StackPanel Grid.Column="2">
+                            <StackPanel x:Name="GeneralRight" Grid.Column="2">
                                 <!-- A heading over the ticks as 介面語言 and 主題 have over theirs: general,
                                      because what goes here next need not be like these two. -->
                                 <TextBlock Text="{DynamicResource S.Settings.Options}"

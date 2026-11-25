@@ -129,6 +129,25 @@ public partial class SettingsPage
         CurrentSectionChanged?.Invoke(this, section);
     }
 
+    // ── 一般設定: the options beside the language and appearance where they fit ──
+
+    // Each half needs about this much for the theme row and the option descriptions to read whole.
+    private const double GeneralTwoColumnWidth = 760;
+    private bool? _generalTwoColumns;
+
+    private void GeneralGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        var twoColumns = e.NewSize.Width >= GeneralTwoColumnWidth;
+        if (_generalTwoColumns == twoColumns) return;
+        _generalTwoColumns = twoColumns;
+
+        Grid.SetColumnSpan(GeneralLeft, twoColumns ? 1 : 3);
+        Grid.SetRow(GeneralRight, twoColumns ? 0 : 1);
+        Grid.SetColumn(GeneralRight, twoColumns ? 2 : 0);
+        Grid.SetColumnSpan(GeneralRight, twoColumns ? 1 : 3);
+        GeneralRight.Margin = twoColumns ? new Thickness(0) : new Thickness(0, 20, 0, 0);
+    }
+
     // ── 辨識模型: the manga card beside the languages where they fit ──
 
     private void ModelsGrid_SizeChanged(object sender, SizeChangedEventArgs e) =>
