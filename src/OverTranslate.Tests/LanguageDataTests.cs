@@ -7,6 +7,15 @@ namespace OverTranslate.Tests;
 
 public class LanguageDataTests
 {
+    // Languages outside the OCR list are named too, not shown as their code (#settings voice rows, prompts).
+    [Theory]
+    [InlineData("HE", "Hebrew")]
+    [InlineData("DE", "German")]
+    [InlineData("FA", "Persian")]
+    [InlineData("EN", "English")]
+    public void Every_source_language_has_a_name(string code, string english) =>
+        Assert.Equal(english, LanguageData.GetSourceDisplayName(code, inEnglish: true));
+
     // The pickers carry codes chosen for the translation APIs; a local translation model wants BCP 47
     // instead, and the tag is the half it was trained to key on rather than decoration beside a name.
     [Theory]

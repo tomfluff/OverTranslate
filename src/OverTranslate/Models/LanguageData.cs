@@ -393,8 +393,14 @@ public static class LanguageData
     /// English while the interface is not — the built-in prompt templates, whose English wording
     /// serves several interface languages and must not name a language in a different one.
     /// </param>
+    /// <remarks>
+    /// The OCR list first, for its own name for 自動 ("Automatic (ZH/EN/JA)"); every other language
+    /// from the full source list. Reading only the OCR list named everything it lacks — German,
+    /// Hebrew, Persian — by its bare code, prompts included.
+    /// </remarks>
     public static string GetSourceDisplayName(string? code, bool inEnglish = false) =>
-        NameIn(OcrSourceLanguages, code, inEnglish);
+        NameIn(OcrSourceLanguages.Any(l => l.Code.Equals(code, StringComparison.OrdinalIgnoreCase))
+            ? OcrSourceLanguages : SourceLanguages, code, inEnglish);
 
     /// <inheritdoc cref="GetSourceDisplayName"/>
     public static string GetTargetDisplayName(string? code, bool inEnglish = false) =>
