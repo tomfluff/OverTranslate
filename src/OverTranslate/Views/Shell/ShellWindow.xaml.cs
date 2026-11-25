@@ -194,8 +194,55 @@ public partial class ShellWindow : Window
 
         RestoreSessionLayout();
 
+        ZoomService.Changed += OnZoomChanged;
+        Closed += (_, _) => ZoomService.Changed -= OnZoomChanged;
+        if (_lastSize is null) GrowForZoom();
+
         // Nav_Checked drives navigation, so this also renders the initial page
         TranslationNav.IsChecked = true;
+    }
+
+    private void OnZoomChanged(object? sender, EventArgs e) => GrowForZoom();
+
+    /// <summary>
+    /// Grows the window toward its designed size at the current interface zoom, as far as the
+    /// screen it is on allows, so zooming in does not leave the user resizing it by hand. Never
+    /// shrinks it — a smaller window is the user's choice — and leaves a maximised one alone.
+    /// </summary>
+    private void GrowForZoom()
+    {
+        if (WindowState != WindowState.Normal) return;
+
+        var zoom = System.Windows.Application.Current.Resources["UiZoom"] is System.Windows.Media.ScaleTransform t ? t.ScaleX : 1;
+        var area = WorkAreaOfThisScreen();
+
+        // The title row is not zoomed (see the markup), only the body under it.
+        var width = Math.Min(Math.Max(Width, DesignedWidth * zoom), area.Width);
+        var height = Math.Min(Math.Max(Height, TitleRowHeight + (DesignedHeight - TitleRowHeight) * zoom), area.Height);
+        if (width == Width && height == Height) return;
+
+        Width = width;
+        Height = height;
+
+        // Kept on its screen: grown from the top-left, it could run off the right or the bottom.
+        if (IsLoaded)
+        {
+            Left = Math.Clamp(Left, area.Left, area.Right - width);
+            Top = Math.Clamp(Top, area.Top, area.Bottom - height);
+        }
+    }
+
+    private const double DesignedWidth = 1280, DesignedHeight = 760, TitleRowHeight = 40;
+
+    /// <summary>The work area of the monitor this window is on, in this window's DIPs.</summary>
+    private Rect WorkAreaOfThisScreen()
+    {
+        var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero) return SystemParameters.WorkArea;
+
+        var px = System.Windows.Forms.Screen.FromHandle(hwnd).WorkingArea;
+        var dpi = System.Windows.Media.VisualTreeHelper.GetDpi(this);
+        return new Rect(px.Left / dpi.DpiScaleX, px.Top / dpi.DpiScaleY, px.Width / dpi.DpiScaleX, px.Height / dpi.DpiScaleY);
     }
 
     /// <inheritdoc cref="_lastSize"/>

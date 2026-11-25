@@ -19,6 +19,22 @@ public class ShellWindowMarkupTests
         .Single(e => (string?)e.Attribute(X + "Name") == name);
 
     /// <summary>
+    /// Under interface zoom the window is often smaller than the rail and the page were laid out
+    /// for: the rail scrolls rather than cutting off 關於, and the page scrolls sideways below a
+    /// floor rather than cutting off its right-hand controls.
+    /// </summary>
+    [Theory]
+    [InlineData("RailPanel", "RailScroll", "VerticalScrollBarVisibility")]
+    [InlineData("ContentHost", "ContentScroll", "HorizontalScrollBarVisibility")]
+    public void Rail_and_page_scroll_when_zoom_outgrows_the_window(string part, string scroller, string direction)
+    {
+        var scroll = Row(part).Ancestors().First(e => e.Name.LocalName == "ScrollViewer");
+
+        Assert.Equal(scroller, (string?)scroll.Attribute(X + "Name"));
+        Assert.Equal("Auto", (string?)scroll.Attribute(direction));
+    }
+
+    /// <summary>
     /// Both 快速工具 rows are switched off for the length of a realtime session, and their tooltips
     /// are then the only place that reason exists — the rail has no room for a note beside them.
     /// WPF withholds tooltips from disabled controls unless asked.

@@ -147,8 +147,16 @@
             <!-- ══════════ Rail ══════════ -->
             <!-- Clipped, because the column is allowed down to zero: without this the rail's
                  contents would keep their measured width and spill across the page beside them. -->
-            <DockPanel Grid.Column="0"
-                       x:Name="RailPanel"
+            <!-- Scrolls when the window is shorter than the rail, which interface zoom makes common.
+                 The border is at least the viewport's height, so with room to spare the rail still
+                 fills it and 關於 stays at the bottom. -->
+            <ScrollViewer Grid.Column="0"
+                          x:Name="RailScroll"
+                          Focusable="False"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+            <Border MinHeight="{Binding ViewportHeight, ElementName=RailScroll}">
+            <DockPanel x:Name="RailPanel"
                        ClipToBounds="True"
                        Margin="16,4,0,16">
 
@@ -443,6 +451,8 @@
                     </DockPanel>
                 </Border>
             </DockPanel>
+            </Border>
+            </ScrollViewer>
 
             <!-- ══════════ Content ══════════ -->
             <!-- A Border rather than a ContentControl so the animated layer has an opaque background
@@ -451,8 +461,16 @@
                  surfaces that WPF assumes may be transparent, and ClearType sub-pixel antialiasing
                  cannot run over transparent pixels. An opaque backing plus ClearTypeHint tells WPF
                  the surface really is opaque, so ClearType stays on for the whole transition. -->
-            <Border Grid.Column="1"
-                    x:Name="ContentHost"
+            <!-- The page follows the window's width down to a floor, and scrolls sideways below it
+                 rather than cutting off its right-hand controls — under interface zoom the window
+                 is often narrower than a page was laid out for. -->
+            <ScrollViewer Grid.Column="1"
+                          x:Name="ContentScroll"
+                          Focusable="False"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled">
+            <Border Width="{Binding ViewportWidth, ElementName=ContentScroll}" MinWidth="600">
+            <Border x:Name="ContentHost"
                     Style="{StaticResource ShellCard}"
                     Margin="16,4,16,16"
                     RenderOptions.ClearTypeHint="Enabled">
@@ -460,6 +478,8 @@
                     <TranslateTransform x:Name="ContentTransform"/>
                 </Border.RenderTransform>
             </Border>
+            </Border>
+            </ScrollViewer>
 
             <!-- ══════════ Modals ══════════ -->
             <!-- Declared last and spanning both columns so a modal covers the nav rail as well as

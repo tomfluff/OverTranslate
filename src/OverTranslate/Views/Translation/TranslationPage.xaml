@@ -20,17 +20,19 @@
         </StackPanel>
 
         <!-- ── Language / provider selectors ── -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,18,0,12">
+        <!-- Wraps rather than cutting off the service picker when the page is narrow, as it is
+             under interface zoom; the 6 under each control is the gap between the rows then. -->
+        <WrapPanel Grid.Row="1" Orientation="Horizontal" Margin="0,18,0,6">
             <ComboBox x:Name="SrcLangBox"
                       Style="{StaticResource ModernComboBox}"
                       ctl:ComboBoxSearch.IsEnabled="True"
-                      Width="162" Height="32" Margin="0,0,6,0"
+                      Width="162" Height="32" Margin="0,0,6,6"
                       SelectedValuePath="Code"
                       VerticalContentAlignment="Center"/>
 
             <Button Content="⇄"
                     Style="{StaticResource IconButton}"
-                    Width="32" Height="32" Margin="0,0,6,0"
+                    Width="32" Height="32" Margin="0,0,6,6"
                     FontSize="13"
                     ToolTip="{DynamicResource S.Translation.SwapTip}"
                     Click="SwapBtn_Click"/>
@@ -38,7 +40,7 @@
             <ComboBox x:Name="TgtLangBox"
                       Style="{StaticResource ModernComboBox}"
                       ctl:ComboBoxSearch.IsEnabled="True"
-                      Width="162" Height="32" Margin="0,0,6,0"
+                      Width="162" Height="32" Margin="0,0,6,6"
                       SelectedValuePath="Code"
                       VerticalContentAlignment="Center"/>
 
@@ -50,10 +52,10 @@
             <ComboBox x:Name="ProviderBox"
                       Style="{StaticResource ModernComboBox}"
                       ctl:ComboBoxItemHints.IsEnabled="True"
-                      Width="180" Height="32"
+                      Width="180" Height="32" Margin="0,0,0,6"
                       SelectedValuePath="Provider"
                       VerticalContentAlignment="Center"/>
-        </StackPanel>
+        </WrapPanel>
 
         <!-- ── Split content card ── -->
         <Border Grid.Row="2"
