@@ -1174,7 +1174,7 @@ public partial class RealtimeControlWindow : Window
     {
         double targetScale = ScreenGeometry.ScaleAt(
             _screenBounds.Left + _screenBounds.Width / 2,
-            _screenBounds.Top + _screenBounds.Height / 2);
+            _screenBounds.Top + _screenBounds.Height / 2) * ZoomService.Factor;
 
         double relative = targetScale / _windowScale;
         RootChrome.LayoutTransform = Math.Abs(relative - 1.0) < 0.001
@@ -1188,7 +1188,7 @@ public partial class RealtimeControlWindow : Window
 
         double targetScale = ScreenGeometry.ScaleAt(
             _screenBounds.Left + _screenBounds.Width / 2,
-            _screenBounds.Top + _screenBounds.Height / 2);
+            _screenBounds.Top + _screenBounds.Height / 2) * ZoomService.Factor;
 
         // Bottom centre, which does sit where subtitles do — the top edge was tried and read as
         // out of the way to the point of being out of mind, and a control the user forgets is there

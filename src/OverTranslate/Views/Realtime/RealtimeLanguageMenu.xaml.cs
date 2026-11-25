@@ -191,7 +191,7 @@ internal partial class RealtimeLanguageMenu : Window
 
         // The capsule's own correction — see RealtimeControlWindow.ApplyScreenScale — so the menu
         // comes out the same physical size as the bar it drops from.
-        double screenScale = ScreenGeometry.ScaleAt(_anchor.Left, _anchor.Top);
+        double screenScale = ScreenGeometry.ScaleAt(_anchor.Left, _anchor.Top) * ZoomService.Factor;  // interface zoom on top of the monitor's own scale
         double relative = screenScale / _windowScale;
         RootChrome.LayoutTransform = Math.Abs(relative - 1.0) < 0.001
             ? Transform.Identity

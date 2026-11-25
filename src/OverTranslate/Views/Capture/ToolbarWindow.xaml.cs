@@ -435,7 +435,7 @@ public partial class ToolbarWindow : Window
     /// the user is actually looking at. Read from the live visual rather than by subtracting the
     /// numbers in the markup, so it cannot drift when those change.
     /// </remarks>
-    // How far the bar is shrunk to fit its monitor; 1 wherever it fits as designed.
+    // How far the bar is scaled: interface zoom, times any shrink to fit its monitor.
     private double _fit = 1;
 
     /// <summary>
@@ -444,10 +444,13 @@ public partial class ToolbarWindow : Window
     /// </summary>
     private void FitTo(double available)
     {
-        FitRoot.LayoutTransform = Transform.Identity;
+        // Interface zoom first; the shrink to fit, if any, on top of it.
+        var zoom = ZoomService.Factor;
+        FitRoot.LayoutTransform = new ScaleTransform(zoom, zoom);
         UpdateLayout();
-        _fit = ActualWidth > available && available > 0 ? available / ActualWidth : 1;
-        if (_fit < 1)
+        var fit = ActualWidth > available && available > 0 ? available / ActualWidth : 1;
+        _fit = zoom * fit;
+        if (fit < 1)
         {
             FitRoot.LayoutTransform = new ScaleTransform(_fit, _fit);
             UpdateLayout();

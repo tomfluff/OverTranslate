@@ -15,8 +15,10 @@ namespace OverTranslate.Services;
 /// are set in. Anything using them through DynamicResource follows a change at once.
 /// </summary>
 /// <remarks>
-/// The capture toolbar, the realtime capsule and the overlays are not zoomed: they already scale
-/// themselves to the monitor they sit on, and the overlays are sized to the text they cover.
+/// Windows that scale themselves to the monitor they sit on — the capture toolbar and drawing panel,
+/// the realtime capsule and its panels — multiply that scale by <see cref="Factor"/> instead. The
+/// translation overlays and realtime subtitles are not zoomed: they are sized to the text they cover,
+/// and have text settings of their own.
 /// </remarks>
 public static class ZoomService
 {
@@ -28,6 +30,9 @@ public static class ZoomService
 
     /// <summary>Raised after a change, for the settings page to show the new values.</summary>
     public static event EventHandler? Changed;
+
+    /// <summary>The interface zoom in effect, for windows that apply it in code.</summary>
+    public static double Factor => Zoom(SettingsService.Instance.Current.UiZoom);
 
     public static double TextScale => TextSize(SettingsService.Instance.Current.TextBoxFontSize) / DesignTextSize;
 

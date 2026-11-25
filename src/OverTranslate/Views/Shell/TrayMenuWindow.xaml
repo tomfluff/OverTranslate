@@ -49,7 +49,7 @@
 
     <!-- At least the blur radius on every side, plus the offset below. Short of that the blur is
          cut off by the window's edge and the cut shows: a straight grey line around the menu. -->
-    <Grid Margin="18">
+    <Grid Margin="18" LayoutTransform="{DynamicResource UiZoom}">
         <Border CornerRadius="8"
                 Background="{DynamicResource AppCardBg}"
                 BorderBrush="{DynamicResource AppBorder}"

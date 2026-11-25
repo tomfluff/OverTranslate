@@ -74,7 +74,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1" Margin="24,4,24,20">
+        <Grid Grid.Row="1" Margin="24,4,24,20" LayoutTransform="{DynamicResource UiZoom}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

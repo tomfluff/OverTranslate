@@ -27,7 +27,7 @@
 
     <!-- At least the blur radius on every side, plus the offset below: short of it the blur is
          cut off by the window's edge and the cut reads as a faint grey rectangle around the card. -->
-    <Border Margin="14,12,14,16">
+    <Border Margin="14,12,14,16" LayoutTransform="{DynamicResource UiZoom}">
         <!-- A capsule rather than a rounded rectangle. This is the smallest thing the
              application puts on screen and it carries one line, so the shape says so: the corner
              radius is half the height it has when nothing has gone wrong, which is the shape of a

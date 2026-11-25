@@ -117,6 +117,8 @@ public partial class UpdateWindow : Window
     public UpdateWindow(UpdateInfo? info, ReleaseNotesFeed? feed)
     {
         InitializeComponent();
+        // The body is drawn at interface zoom (the title row is not, as in the main window).
+        Width *= ZoomService.Factor;
         _updateInfo = info;
 
         // Releases with nothing to read are no different from having no notes: a list of nothing but
@@ -190,7 +192,7 @@ public partial class UpdateWindow : Window
             }
         }
 
-        MaxHeight = Math.Min(TallestWindow, SystemParameters.WorkArea.Height);
+        MaxHeight = Math.Min(TallestWindow * ZoomService.Factor, SystemParameters.WorkArea.Height);
         if (_feed?.Shown.Count > 1)
         {
             SizeToContent = SizeToContent.Manual;

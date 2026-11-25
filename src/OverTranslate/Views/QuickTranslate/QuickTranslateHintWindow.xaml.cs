@@ -142,6 +142,7 @@ public partial class QuickTranslateHintWindow : Window
     private QuickTranslateHintWindow()
     {
         InitializeComponent();
+        MaxWidth *= ZoomService.Factor;   // the card is drawn at interface zoom
         _pointer = System.Windows.Forms.Cursor.Position;
 
         MessageText.Text = LocalizationService.Get("S.Translation.Translating");

@@ -94,7 +94,7 @@
     <!-- The same margin the capture toolbar leaves, and for the same reason: a blur still carrying
          opacity at the window's edge is cut off by a straight line, which reads as a stray border
          around the bar. -->
-    <Border Margin="12,10,12,14">
+    <Border Margin="12,10,12,14" LayoutTransform="{DynamicResource UiZoom}">
         <!-- The bar, and the 形狀 tray hung off it. A stack rather than one surface so the tray can
              come and go without the bar itself changing shape, and so it can be put on whichever
              side of the bar faces away from the capture toolbar — see ShowShapeTray. -->

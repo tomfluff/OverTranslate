@@ -174,7 +174,7 @@ internal partial class RealtimeAppearancePanel : Window
 
         // The capsule's own correction — see RealtimeControlWindow.ApplyScreenScale — so the panel
         // comes out the same physical size as the bar it opens from.
-        double screenScale = ScreenGeometry.ScaleAt(_bar.Left, _bar.Top);
+        double screenScale = ScreenGeometry.ScaleAt(_bar.Left, _bar.Top) * ZoomService.Factor;  // interface zoom on top of the monitor's own scale
         double relative = screenScale / _windowScale;
         RootChrome.LayoutTransform = Math.Abs(relative - 1.0) < 0.001
             ? Transform.Identity

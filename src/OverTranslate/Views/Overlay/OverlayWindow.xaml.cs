@@ -188,7 +188,8 @@ public partial class OverlayWindow : Window
         // scale the card would come out the wrong physical size. Applied before Measure so the
         // desired size below is the transformed one the centring needs.
         double relScale = ScreenGeometry.ScaleAt(
-            (int)(selPhysX + selPhysW / 2), (int)(selPhysY + selPhysH / 2)) / _dpiX;
+            (int)(selPhysX + selPhysW / 2), (int)(selPhysY + selPhysH / 2)) / _dpiX
+            * ZoomService.Factor;   // the card is interface, not translated text
         ProcessingBorder.LayoutTransform = relScale == 1.0
             ? Transform.Identity
             : new ScaleTransform(relScale, relScale);

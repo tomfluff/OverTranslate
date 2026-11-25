@@ -384,8 +384,9 @@ public partial class AnnotationPanelWindow : Window
 
         // Where the visible panel starts inside its own window, and how big it is, in pixels.
         var inset = PanelSurface.TranslatePoint(new Point(0, 0), this);
-        double visW = PanelSurface.ActualWidth  * scale;
-        double visH = PanelSurface.ActualHeight * scale;
+        // ActualWidth is before the zoom the panel is drawn at.
+        double visW = PanelSurface.ActualWidth  * scale * ZoomService.Factor;
+        double visH = PanelSurface.ActualHeight * scale * ZoomService.Factor;
         double gap  = GapFromToolbar * scale;
 
         var wa = System.Windows.Forms.Screen.FromPoint(new System.Drawing.Point(
