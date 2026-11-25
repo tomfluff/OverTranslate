@@ -320,7 +320,7 @@ public sealed class OpenAiChatTranslator
             catch (Exception ex) when (ex is not OperationCanceledException || !job.Token.IsCancellationRequested)
             {
                 job.Fail(index, ex);
-                if (MightBeTheTexts(ex)) continue;
+                if (MightBeTheTexts(ex, job)) continue;
 
                 unreachable = true;
                 Log.Info("OpenAI 相容翻譯：第 {Index} 段失敗（{Reason}），不再送其餘 {Rest} 段",
@@ -352,7 +352,7 @@ public sealed class OpenAiChatTranslator
         {
             return await SegmentAsync(message, text, job.Request, token, ofOne);
         }
-        catch (Exception ex) when (MightBeTheTexts(ex) && (ex is not OperationCanceledException || !token.IsCancellationRequested))
+        catch (Exception ex) when (MightBeTheTexts(ex, job) && (ex is not OperationCanceledException || !token.IsCancellationRequested))
         {
             var alone = ofOne ? job.Request.Prompt.BuildBatch([text]) : job.Request.Prompt.Build(text);
             if (alone == message) throw;
@@ -362,7 +362,7 @@ public sealed class OpenAiChatTranslator
             {
                 return await SegmentAsync(alone, text, job.Request, token, ofOne);
             }
-            catch (Exception again) when (MightBeTheTexts(again) && (again is not OperationCanceledException || !token.IsCancellationRequested))
+            catch (Exception again) when (MightBeTheTexts(again, job) && (again is not OperationCanceledException || !token.IsCancellationRequested))
             {
                 ExceptionDispatchInfo.Capture(ex).Throw();
                 throw;
@@ -447,7 +447,7 @@ public sealed class OpenAiChatTranslator
             }
             catch (Exception ex) when (ex is not OperationCanceledException || !job.Token.IsCancellationRequested)
             {
-                if (MightBeTheTexts(ex))
+                if (MightBeTheTexts(ex, job))
                 {
                     again.AddRange(batch);
                     continue;
@@ -500,7 +500,7 @@ public sealed class OpenAiChatTranslator
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException || !token.IsCancellationRequested)
                 {
-                    if (!MightBeTheTexts(ex)) Volatile.Write(ref unreachable, true);
+                    if (!MightBeTheTexts(ex, job)) Volatile.Write(ref unreachable, true);
                     job.Fail(index, ex);
                 }
             });
@@ -614,11 +614,15 @@ public sealed class OpenAiChatTranslator
     /// <remarks>
     /// No answer at all is a server that is not there, not running, or not reachable. The statuses
     /// are a key, an address or a model the server refuses whatever is asked, and asking too often —
-    /// which more requests would only make worse. Every other refusal can be the text's own doing.
+    /// which more requests would only make worse. A timeout before anything of the call came back is
+    /// a server that is stuck, not a text too long — sent on, each text would wait out the timeout
+    /// twice, and a screen could take minutes to give up. Every other refusal can be the text's own
+    /// doing.
     /// </remarks>
-    private static bool MightBeTheTexts(Exception error) => error switch
+    private static bool MightBeTheTexts(Exception error, Job job) => error switch
     {
         HttpRequestException => false,
+        OpenAiChatException { Failure: OpenAiChatFailure.TimedOut } => job.Translated > 0,
         OpenAiChatException
         {
             Failure: OpenAiChatFailure.Rejected,

@@ -106,13 +106,14 @@ public class DiagnosticRedactionTests
     }
 
     [Fact]
-    public void FileThatIsNotJson_IsReturnedUnchanged()
+    public void FileThatIsNotJson_KeepsItsShapeButNotItsKeys()
     {
-        const string broken = "{ this was truncated by a power cut";
+        const string broken = "{ \"Theme\": \"Dark\", \"DeepLApiKey\": \"abc\\\"def\", \"OpenAi\": { \"ApiKey\": \"sk-trunc";
 
-        // A file in this shape cannot hold a key in a field we would recognise, and its shape is
-        // itself the bug being reported — so it goes into the bundle exactly as found.
-        Assert.Equal(broken, DiagnosticBundleService.RedactSettings(broken));
+        // Its shape is the bug being reported, but a file cut short still holds the keys before the cut.
+        Assert.Equal(
+            "{ \"Theme\": \"Dark\", \"DeepLApiKey\": \"<redacted:8>\", \"OpenAi\": { \"ApiKey\": \"<redacted:8>",
+            DiagnosticBundleService.RedactSettings(broken));
     }
 
     // The settings file is not the only thing in the bundle that carried something the user did not

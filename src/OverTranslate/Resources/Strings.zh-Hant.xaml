@@ -282,6 +282,10 @@
     <!-- ── Tray notifications and capture balloons ── -->
     <sys:String x:Key="S.Main.MinimizedTitle">OverTranslate 已最小化</sys:String>
     <sys:String x:Key="S.Main.MinimizedBody">程式已縮小至系統匣，可使用 {0} 開始進行截圖翻譯。</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableTitle">無法讀取設定</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableBody">設定檔已損毀，現使用預設設定。損毀的檔案已保存為 {0}。</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenTitle">有快速鍵無法使用</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenBody">{0} 已被其他程式占用，在這裡不會生效。請在設定中改選其他按鍵。</sys:String>
     <sys:String x:Key="S.Main.DefaultShortcutName">已設定的快捷鍵</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningTitle">即時翻譯進行中</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningBody">編輯翻譯區塊時無法使用取詞翻譯。</sys:String>
@@ -566,6 +570,8 @@
     <sys:String x:Key="S.Settings.Hotkeys">快捷鍵</sys:String>
     <!-- 勾選框沒有文字，所以這是它的 ToolTip，不是標籤 -->
     <sys:String x:Key="S.Settings.HotkeyUnset">未設定</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhere">{0} — 已被其他程式占用</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhereError">{0} 已被其他程式占用，無法生效。請改選其他組合。</sys:String>
     <sys:String x:Key="S.Settings.HotkeyClear">清除快捷鍵</sys:String>
     <!-- The shortcut box has no label of its own; this is its ToolTip -->
     <sys:String x:Key="S.Settings.HotkeyRecordTip">點一下重新錄製快捷鍵</sys:String>

@@ -13,8 +13,10 @@ namespace OverTranslate.Services.Realtime;
 /// long as the picture stayed up, and a rate limit asked that often never lifts.</para>
 ///
 /// <para>So a retry after a failure waits, 1→2→4 seconds and then 4 each time — a failed read starts
-/// the same but goes on to 16 (see <see cref="LongestWait"/>); a retry for any other reason — a pass
-/// dropped or abandoned rather than refused — is taken at once, as before. Only the retry is held:
+/// the same but goes on to 16 (see <see cref="LongestWait"/>). A read dropped because every
+/// translation slot is held waits the same way, since a stalled provider is no likelier to have room
+/// at the next poll. A retry for any other reason — a pass abandoned by a stop or a language change —
+/// is taken at once, as before. Only the retry is held:
 /// a picture that changes is read and translated as any change is, since the new words are the
 /// ones the reader is waiting for. The count starts over once a translation is drawn whole.</para>
 /// </remarks>

@@ -207,7 +207,8 @@ internal sealed class GlobalAuxiliaryHotkeys : IDisposable
             var message = wParam.ToInt32();
 
             if (PressedKind(message, lParam) is { } kind &&
-                Volatile.Read(ref _bindings).TryGetValue(ShortcutTrigger.Mouse(kind), out var action))
+                Volatile.Read(ref _bindings).TryGetValue(ShortcutTrigger.Mouse(kind), out var action) &&
+                SyntheticKeyGuard.Shared.AllowsShortcut(kind.ToString()))
             {
                 // Post, never run: see the remarks on this class for what a slow callback costs.
                 Raise(action, null);
@@ -338,7 +339,10 @@ internal sealed class GlobalAuxiliaryHotkeys : IDisposable
             foreach (var button in GamepadInput.SupportedButtons)
             {
                 if ((pressed & (ushort)button) == 0) continue;
-                if (bindings.TryGetValue(ShortcutTrigger.Gamepad(button), out var action))
+                // A second press while the first is still reading the selection would snapshot the
+                // borrowed clipboard and put that back instead of the user's — see SyntheticKeyGuard.
+                if (bindings.TryGetValue(ShortcutTrigger.Gamepad(button), out var action) &&
+                    SyntheticKeyGuard.Shared.AllowsShortcut(button.ToString()))
                     Raise(action, null);
             }
         }

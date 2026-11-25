@@ -106,6 +106,23 @@ public class SettingsService
             return fresh;
         }
 
+        // Defaults are about to be saved over it, and with them every key and profile it held: the
+        // unreadable file is set aside first so it can be repaired by hand, and startup says so.
+        if (!IsObject(json))
+        {
+            var aside = readFrom + ".unreadable-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            try
+            {
+                File.Copy(readFrom!, aside, overwrite: true);
+                UnreadableCopy = aside;
+                Log.Warn("Settings file {Path} could not be read; kept as {Aside}, defaults in use", readFrom, aside);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Settings file {Path} could not be read or set aside", readFrom);
+            }
+        }
+
         var settings = Parse(json);
         settings.Glossary = WithLists(settings.Glossary, glossaries);
         if (settings.LastRunVersion != version)
@@ -124,6 +141,17 @@ public class SettingsService
         else if (!File.Exists(path))
             save(settings);
         return settings;
+    }
+
+    /// <summary>
+    /// Where the last load set aside a settings file it could not read, or null when it read fine.
+    /// </summary>
+    public static string? UnreadableCopy { get; private set; }
+
+    private static bool IsObject(string json)
+    {
+        try { return JsonNode.Parse(json) is JsonObject; }
+        catch (JsonException) { return false; }
     }
 
     /// <summary>
@@ -401,7 +429,7 @@ public class SettingsService
         current.AssetsPendingDelete = pendingDelete;
         try
         {
-            Write();
+            lock (_writeGate) Write();
         }
         catch
         {
@@ -411,11 +439,14 @@ public class SettingsService
         }
     }
 
+    // Saves come from background threads too, and two at once would share the temporary file.
+    private readonly object _writeGate = new();
+
     public void Save()
     {
         try
         {
-            Write();
+            lock (_writeGate) Write();
         }
         catch (Exception ex)
         {

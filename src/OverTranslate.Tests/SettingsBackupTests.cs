@@ -153,4 +153,21 @@ public class SettingsBackupTests : IDisposable
         Assert.DoesNotContain("+", SettingsBackup.CurrentVersion);
         Assert.True(Velopack.SemanticVersion.TryParse(SettingsBackup.CurrentVersion, out _));
     }
+
+    /// <summary>
+    /// A file that is not JSON is replaced by defaults on the first save, so it is set aside first,
+    /// byte for byte, for the user to repair.
+    /// </summary>
+    [Fact]
+    public void An_unreadable_file_is_set_aside_before_defaults_are_saved_over_it()
+    {
+        const string damaged = "{ \"Theme\": \"Light\", \"OpenAi\": { \"Pro";
+        File.WriteAllText(SettingsPath, damaged);
+
+        Start("2.10.0");
+
+        var aside = Assert.Single(Directory.GetFiles(Path.GetDirectoryName(SettingsPath)!, "appsettings.json.unreadable-*"));
+        Assert.Equal(damaged, File.ReadAllText(aside));
+        Assert.Equal(aside, SettingsService.UnreadableCopy);
+    }
 }

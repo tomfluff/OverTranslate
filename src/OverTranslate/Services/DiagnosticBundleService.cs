@@ -294,8 +294,9 @@ public static class DiagnosticBundleService
     /// it the length a key of this kind should be" answers a good share of the reports this file is
     /// collected for, and neither question can be asked of a blank.
     ///
-    /// Unparseable input is returned as-is only when it is not JSON at all — that file cannot hold a
-    /// key in a field we would recognise anyway, and its shape is itself the bug being reported.
+    /// Input that is not JSON keeps its shape, which is itself the bug being reported, but a file cut
+    /// short by a power cut still holds every key written before the cut: those values are masked by
+    /// pattern instead.
     /// </remarks>
     public static string RedactSettings(string json)
     {
@@ -306,11 +307,11 @@ public static class DiagnosticBundleService
         }
         catch (JsonException)
         {
-            return json;
+            return MaskUnparsed(json);
         }
 
         if (root is not JsonObject obj)
-            return json;
+            return MaskUnparsed(json);
 
         RedactInPlace(obj);
         return obj.ToJsonString(ReadableJson);
@@ -353,6 +354,13 @@ public static class DiagnosticBundleService
         }
     }
 
+    private static readonly System.Text.RegularExpressions.Regex UnparsedSecret = new(
+        @"(""[^""]*(?:" + string.Join("|", SecretSuffixes) + @")""\s*:\s*"")((?:[^""\\]|\\.)*)",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+    private static string MaskUnparsed(string json) =>
+        UnparsedSecret.Replace(json, m => m.Groups[1].Value + Mask(m.Groups[2].Value));
+
     private static bool IsSecret(string name) =>
         SecretSuffixes.Any(suffix => name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase));
 
@@ -368,7 +376,7 @@ public static class DiagnosticBundleService
     /// OpenAI-compatible provider misbehaves. What cannot be kept is a token someone put in the
     /// user info or the query string, which some self-hosted front ends still ask for.
     /// </remarks>
-    private static string StripUrlCredentials(string? value)
+    internal static string StripUrlCredentials(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return value ?? "";
         if (!Uri.TryCreate(value, UriKind.Absolute, out var uri)) return value;

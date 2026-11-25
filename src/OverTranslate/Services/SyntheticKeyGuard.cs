@@ -21,8 +21,9 @@ namespace OverTranslate.Services;
 /// <see cref="Grace"/> of the last send ending, which is when a WM_HOTKEY the send itself produced
 /// can still be waiting in the queue. A loop then stops after one turn, whatever the key.</para>
 ///
-/// <para>Only keyboard shortcuts consult this. A mouse or controller button cannot be produced by a
-/// synthesised key, so there is nothing for it to protect them from.</para>
+/// <para>Mouse and controller shortcuts consult it too. They cannot be produced by a synthesised key,
+/// but a second press while a read is borrowing the clipboard would snapshot the borrowed contents and
+/// restore those over the user's own.</para>
 /// </remarks>
 internal sealed class SyntheticKeyGuard
 {

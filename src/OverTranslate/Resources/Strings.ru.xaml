@@ -269,6 +269,10 @@
     <!-- ── Tray notifications and capture balloons ── -->
     <sys:String x:Key="S.Main.MinimizedTitle">OverTranslate продолжает работать</sys:String>
     <sys:String x:Key="S.Main.MinimizedBody">Программа свернута в область уведомлений. Нажмите {0}, чтобы начать перевод снимка экрана.</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableTitle">Не удалось прочитать настройки</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableBody">Файл настроек повреждён, поэтому используются настройки по умолчанию. Повреждённый файл сохранён как {0}.</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenTitle">Сочетание клавиш недоступно</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenBody">{0} занято другой программой и здесь работать не будет. Выберите другое сочетание в настройках.</sys:String>
     <sys:String x:Key="S.Main.DefaultShortcutName">сочетание клавиш</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningTitle">Идет перевод в реальном времени</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningBody">Всплывающий перевод недоступен во время редактирования областей.</sys:String>
@@ -540,6 +544,8 @@
 
     <sys:String x:Key="S.Settings.Hotkeys">Сочетания клавиш</sys:String>
     <sys:String x:Key="S.Settings.HotkeyUnset">Не задано</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhere">{0} — занято другой программой</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhereError">{0} занято другой программой и работать не будет. Выберите другое сочетание.</sys:String>
     <sys:String x:Key="S.Settings.HotkeyClear">Очистить сочетание</sys:String>
     <sys:String x:Key="S.Settings.HotkeyRecordTip">Нажмите, чтобы записать новое сочетание</sys:String>
     <sys:String x:Key="S.Settings.HotkeyGuide">Доступные клавиши</sys:String>

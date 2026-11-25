@@ -860,6 +860,24 @@ public class OpenAiChatProtocolTests
         Assert.Equal(OpenAiChatFailure.TimedOut, error.Failure);
     }
 
+    /// <summary>
+    /// A server that times out before anything came back is stuck: the rest are not sent, and the
+    /// text is not sent again alone, or a screen waits out the timeout many times over.
+    /// </summary>
+    [Fact]
+    public async Task ATimeoutBeforeAnyAnswerStopsTheRest()
+    {
+        var handler = new NeverAnsweringHandler();
+        using var http = new HttpClient(handler);
+        var request = Request() with { Timeout = TimeSpan.FromMilliseconds(50) };
+
+        var error = await Assert.ThrowsAsync<OpenAiChatException>(() =>
+            new OpenAiChatTranslator(http).TranslateAsync(Blocks(12), request));
+
+        Assert.Equal(OpenAiChatFailure.TimedOut, error.Failure);
+        Assert.Equal(1, handler.Sent);
+    }
+
     /// <summary>The caller's own cancellation still comes out as a cancellation.</summary>
     [Fact]
     public async Task CancellingByTheCallerIsNotATimeout()
@@ -963,9 +981,13 @@ public class OpenAiChatProtocolTests
 
     private sealed class NeverAnsweringHandler : HttpMessageHandler
     {
+        private int _sent;
+        public int Sent => Volatile.Read(ref _sent);
+
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            Interlocked.Increment(ref _sent);
             await Task.Delay(Timeout.Infinite, cancellationToken);
             throw new InvalidOperationException("unreachable");
         }

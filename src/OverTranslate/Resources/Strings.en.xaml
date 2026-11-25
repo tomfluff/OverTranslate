@@ -272,6 +272,10 @@ Actually used this time: {2}</sys:String>
     <!-- ── Tray notifications and capture balloons ── -->
     <sys:String x:Key="S.Main.MinimizedTitle">OverTranslate is still running</sys:String>
     <sys:String x:Key="S.Main.MinimizedBody">Minimised to the system tray. Press {0} to start a screen capture translation.</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableTitle">Settings could not be read</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableBody">The settings file was damaged, so the defaults are in use. The damaged file was kept as {0}.</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenTitle">A shortcut is unavailable</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenBody">{0} is in use by another program, so it will not work here. Choose another one in Settings.</sys:String>
     <sys:String x:Key="S.Main.DefaultShortcutName">your shortcut</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningTitle">Realtime translation is running</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningBody">Quick lookup isn't available while editing blocks.</sys:String>
@@ -544,6 +548,8 @@ Actually used this time: {2}</sys:String>
     <sys:String x:Key="S.Settings.Hotkeys">Shortcuts</sys:String>
     <!-- The checkbox carries no text, so this is its ToolTip rather than a label -->
     <sys:String x:Key="S.Settings.HotkeyUnset">Not set</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhere">{0} — in use by another program</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhereError">{0} is in use by another program and will not work. Choose another combination.</sys:String>
     <sys:String x:Key="S.Settings.HotkeyClear">Clear shortcut</sys:String>
     <!-- The shortcut box has no label of its own; this is its ToolTip -->
     <sys:String x:Key="S.Settings.HotkeyRecordTip">Click to record a new shortcut</sys:String>

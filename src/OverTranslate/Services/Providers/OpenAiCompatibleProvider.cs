@@ -208,7 +208,7 @@ public sealed class OpenAiCompatibleProvider : ITranslationProvider
         var glossary = options.Glossary is { } glossaries ? GlossaryRuntime.For(glossaries, targetLang) : null;
         var prompt = GlossaryRuntime.With(BuildPrompt(sourceLang, targetLang, options.Template, options.Batch), glossary);
         Log.Info("OpenAI 相容翻譯：{Count} 個區塊，模型 \"{Model:l}\"，端點 {Endpoint}，{Mode:l}，{Way:l}，詞彙表 {Terms} 條",
-            blocks.Count, model, endpoint, prompt.IsDefault ? "預設模板" : prompt.HasContext ? "自訂模板" : "自訂模板（無上下文）",
+            blocks.Count, model, DiagnosticBundleService.StripUrlCredentials(endpoint.ToString()), prompt.IsDefault ? "預設模板" : prompt.HasContext ? "自訂模板" : "自訂模板（無上下文）",
             options.Batch ? "批次" : "逐段", glossary?.Matcher.Count ?? 0);
 
         // The user's own words only at Debug, beside the text: what they wrote can quote what was on

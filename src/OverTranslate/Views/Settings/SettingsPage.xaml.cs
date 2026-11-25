@@ -1556,6 +1556,12 @@ public partial class SettingsPage : UserControl
         if (System.Windows.Application.Current.MainWindow is MainWindow main)
             main.ReRegisterHotkey();
 
+        // Rebinding can free or lose other combinations too, so every row is shown again.
+        var settings = SettingsService.Instance.Current;
+        foreach (var f in _hotkeyFields) ShowStoredShortcut(f, settings);
+        if (IsHeldElsewhere(field.Action))
+            ShowError(LocalizationService.Format("S.Settings.HotkeyHeldElsewhereError", field.Display(settings)));
+
         // The nav rail advertises these beside 截圖翻譯 and 取詞翻譯 and is on screen right now, so it
         // has to be told; nothing else re-reads them until the shell is next shown or activated. The
         // other shortcuts are advertised nowhere, so there is nothing to refresh.
@@ -1670,11 +1676,20 @@ public partial class SettingsPage : UserControl
     /// not be bound — an older version recorded Ctrl+C and Ctrl+V — because it is not registered
     /// either (<see cref="HotkeyBindings.Resolve"/>).
     /// </remarks>
+    /// <summary>Whether Windows refused this shortcut because another program holds its combination.</summary>
+    private static bool IsHeldElsewhere(HotkeyAction action) =>
+        System.Windows.Application.Current.MainWindow is MainWindow main && main.TakenHotkeys.Contains(action);
+
     private static void ShowStoredShortcut(HotkeyField field, AppSettings settings)
     {
         var set = (field.IsSet?.Invoke(settings) ?? true) && HotkeyBindings.IsBindable(field.Trigger(settings));
 
-        if (set)
+        if (set && IsHeldElsewhere(field.Action))
+        {
+            field.Box.Text = LocalizationService.Format("S.Settings.HotkeyHeldElsewhere", field.Display(settings));
+            field.Box.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "AppError");
+        }
+        else if (set)
         {
             field.Box.Text = field.Display(settings);
             field.Box.ClearValue(System.Windows.Controls.Control.ForegroundProperty);

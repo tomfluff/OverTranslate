@@ -276,6 +276,10 @@
     <!-- ── Tray notifications and capture balloons ── -->
     <sys:String x:Key="S.Main.MinimizedTitle">OverTranslate は動作中です</sys:String>
     <sys:String x:Key="S.Main.MinimizedBody">タスクトレイに最小化しました。{0} でキャプチャ翻訳を開始できます。</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableTitle">設定を読み込めませんでした</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableBody">設定ファイルが破損していたため、既定の設定を使用しています。破損したファイルは {0} として保存しました。</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenTitle">使用できないショートカットがあります</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenBody">{0} は別のプログラムが使用しているため、ここでは動作しません。設定で別のキーを選んでください。</sys:String>
     <sys:String x:Key="S.Main.DefaultShortcutName">設定したショートカットキー</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningTitle">リアルタイム翻訳の実行中</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningBody">ブロックの編集中はポップアップ翻訳を使用できません。</sys:String>
@@ -548,6 +552,8 @@
     <sys:String x:Key="S.Settings.Hotkeys">ショートカットキー</sys:String>
     <!-- The checkbox carries no text, so this is its ToolTip rather than a label -->
     <sys:String x:Key="S.Settings.HotkeyUnset">未設定</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhere">{0} — 別のプログラムが使用中</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhereError">{0} は別のプログラムが使用中のため動作しません。別の組み合わせを選んでください。</sys:String>
     <sys:String x:Key="S.Settings.HotkeyClear">ショートカットキーをクリア</sys:String>
     <!-- The shortcut box has no label of its own; this is its ToolTip -->
     <sys:String x:Key="S.Settings.HotkeyRecordTip">クリックしてショートカットキーを録り直す</sys:String>

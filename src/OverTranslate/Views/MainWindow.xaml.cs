@@ -181,6 +181,7 @@ public partial class MainWindow : Window
     {
         var settings = SettingsService.Instance.Current;
         var hwnd = new WindowInteropHelper(this).Handle;
+        TakenHotkeys.Clear();
 
         _hotkey = new GlobalHotkey(GlobalHotkey.CaptureId);
         _hotkey.HotkeyPressed += OnHotkeyPressed;
@@ -248,6 +249,13 @@ public partial class MainWindow : Window
                 hooks.TryGetValue(binding.Action, out var hook))
             {
                 hook.Register(hwnd, binding.Modifiers, binding.VirtualKey);
+                if (!hook.IsRegistered)
+                {
+                    // RegisterHotKey refuses only when another program holds the combination.
+                    Log.Warn("Hotkey {Action} ({Display}) is held by another program",
+                        binding.Action, HotkeyBindings.DisplayFor(settings, binding.Action));
+                    TakenHotkeys.Add(binding.Action);
+                }
             }
         }
 
@@ -339,8 +347,32 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// The keyboard shortcuts Windows refused at the last registration because another program
+    /// already holds the combination; Settings marks them, and startup says so once.
+    /// </summary>
+    public HashSet<HotkeyAction> TakenHotkeys { get; } = [];
+
     private void ShowStartupBalloon()
     {
+        if (SettingsService.UnreadableCopy is { } aside)
+        {
+            ShowTrayNotification(
+                LocalizationService.Get("S.Main.SettingsUnreadableTitle"),
+                LocalizationService.Format("S.Main.SettingsUnreadableBody", aside));
+            return;
+        }
+
+        if (TakenHotkeys.Count > 0)
+        {
+            var settings = SettingsService.Instance.Current;
+            ShowTrayNotification(
+                LocalizationService.Get("S.Main.HotkeysTakenTitle"),
+                LocalizationService.Format("S.Main.HotkeysTakenBody",
+                    string.Join(", ", TakenHotkeys.Select(a => HotkeyBindings.DisplayFor(settings, a)))));
+            return;
+        }
+
         var hotkeyDisplay = SettingsService.Instance.Current.HotkeyDisplay;
         var shortcutText = string.IsNullOrWhiteSpace(hotkeyDisplay)
             ? LocalizationService.Get("S.Main.DefaultShortcutName")

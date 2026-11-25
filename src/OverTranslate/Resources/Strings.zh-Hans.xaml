@@ -272,6 +272,10 @@
     <!-- ── Tray notifications and capture balloons ── -->
     <sys:String x:Key="S.Main.MinimizedTitle">OverTranslate 已最小化</sys:String>
     <sys:String x:Key="S.Main.MinimizedBody">程序已最小化到系统托盘，可使用 {0} 开始进行截图翻译。</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableTitle">无法读取设置</sys:String>
+    <sys:String x:Key="S.Main.SettingsUnreadableBody">设置文件已损坏，现使用默认设置。损坏的文件已保存为 {0}。</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenTitle">有快捷键无法使用</sys:String>
+    <sys:String x:Key="S.Main.HotkeysTakenBody">{0} 已被其他程序占用，在这里不会生效。请在设置中改选其他按键。</sys:String>
     <sys:String x:Key="S.Main.DefaultShortcutName">已设置的快捷键</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningTitle">实时翻译进行中</sys:String>
     <sys:String x:Key="S.Main.RealtimeRunningBody">编辑翻译区块时无法使用取词翻译。</sys:String>
@@ -544,6 +548,8 @@
     <sys:String x:Key="S.Settings.Hotkeys">快捷键</sys:String>
     <!-- The checkbox carries no text, so this is its ToolTip rather than a label -->
     <sys:String x:Key="S.Settings.HotkeyUnset">未设置</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhere">{0} — 已被其他程序占用</sys:String>
+    <sys:String x:Key="S.Settings.HotkeyHeldElsewhereError">{0} 已被其他程序占用，无法生效。请改选其他组合。</sys:String>
     <sys:String x:Key="S.Settings.HotkeyClear">清除快捷键</sys:String>
     <!-- The shortcut box has no label of its own; this is its ToolTip -->
     <sys:String x:Key="S.Settings.HotkeyRecordTip">点击重新录制快捷键</sys:String>

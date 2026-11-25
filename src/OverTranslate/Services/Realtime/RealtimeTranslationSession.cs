@@ -1658,7 +1658,9 @@ public sealed class RealtimeTranslationSession
                     Log.Debug(
                         "Realtime region {Region} dropped a read: {InFlight} translations already in flight",
                         region.Id, MaxConcurrentTranslations);
-                RequestRetry();
+                // Waited for like a failure: retried at once, every poll read the whole region
+                // again only to find the slots still full, and kept a core busy doing it.
+                _retry.RequestAfterFailure();
                 return;
             }
 
