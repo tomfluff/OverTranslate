@@ -201,6 +201,9 @@ public partial class ToolbarWindow : Window
         int centreX = (int)(_selPhysLeft + _selPhysWidth  / 2);
         int centreY = (int)(_selPhysTop  + _selPhysHeight / 2);
         double scale = ScreenGeometry.ScaleAt(centreX, centreY);
+        var wa = System.Windows.Forms.Screen
+            .FromPoint(new System.Drawing.Point(centreX, centreY)).WorkingArea;
+        FitTo(wa.Width / scale - 8);
 
         // WPF lays out in DIP regardless of DPI, so the DIP size scales straight to target pixels.
         // The height is always the one with the manga model footer showing, whether it is or not:
@@ -210,10 +213,8 @@ public partial class ToolbarWindow : Window
         double footer = MangaFooter.Visibility == Visibility.Visible
             ? 0 : MangaFooter.Height + MangaFooter.Margin.Top;
         double tbW = (ActualWidth  > 0 ? ActualWidth  : 1090) * scale;
-        double tbH = ((ActualHeight > 0 ? ActualHeight : 88) + footer) * scale;
+        double tbH = ((ActualHeight > 0 ? ActualHeight : 88) + footer * _fit) * scale;
 
-        var wa = System.Windows.Forms.Screen
-            .FromPoint(new System.Drawing.Point(centreX, centreY)).WorkingArea;
         double margin = 4 * scale;
         double gap    = 6 * scale;
 
@@ -434,6 +435,25 @@ public partial class ToolbarWindow : Window
     /// the user is actually looking at. Read from the live visual rather than by subtracting the
     /// numbers in the markup, so it cannot drift when those change.
     /// </remarks>
+    // How far the bar is shrunk to fit its monitor; 1 wherever it fits as designed.
+    private double _fit = 1;
+
+    /// <summary>
+    /// Shrinks the bar to <paramref name="available"/> DIP when it is wider — a portrait 1080-pixel
+    /// screen is narrower than the bar at 100% — rather than leaving its last buttons off the edge.
+    /// </summary>
+    private void FitTo(double available)
+    {
+        FitRoot.LayoutTransform = Transform.Identity;
+        UpdateLayout();
+        _fit = ActualWidth > available && available > 0 ? available / ActualWidth : 1;
+        if (_fit < 1)
+        {
+            FitRoot.LayoutTransform = new ScaleTransform(_fit, _fit);
+            UpdateLayout();
+        }
+    }
+
     public (Rect Visible, double Scale) VisiblePhysicalBounds()
     {
         double scale = ScreenGeometry.ScaleAt(
@@ -445,8 +465,8 @@ public partial class ToolbarWindow : Window
         return (new Rect(
                     bounds.Left + topLeft.X * scale,
                     bounds.Top  + topLeft.Y * scale,
-                    BarSurface.ActualWidth  * scale,
-                    BarSurface.ActualHeight * scale),
+                    BarSurface.ActualWidth  * scale * _fit,
+                    BarSurface.ActualHeight * scale * _fit),
                 scale);
     }
 

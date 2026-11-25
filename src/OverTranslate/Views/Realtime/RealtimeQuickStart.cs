@@ -34,7 +34,7 @@ internal readonly record struct RealtimeQuickStart(RealtimeStartRequest? Request
         if (!WgcCapability.SupportsWindowMode && !WgcCapability.SupportsScreenMode)
             return Refuse(WgcCapability.UnsupportedMessageKey);
 
-        var source = LanguageData.GetValidOcrSourceCode(realtime.SourceLanguage);
+        var source = LanguageData.GetValidRealtimeSourceCode(realtime.SourceLanguage);
         if (string.IsNullOrWhiteSpace(source))
             return Refuse("S.Realtime.ChooseSourceFirst");
 

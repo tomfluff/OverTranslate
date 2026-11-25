@@ -218,6 +218,15 @@ public partial class QuickLookupWindow : Window
     /// </param>
     public static async Task SummonAsync(bool pinned = false, uint? copiedSince = null)
     {
+        // Pressed in the popup itself, the selection is the popup's own text — Ctrl+C+C there is a
+        // copy of the translation, and feeding it back in as the input, or a blank one when nothing
+        // was selected, is not what was asked for.
+        if (_current is { _closing: false, IsActive: true } focused)
+        {
+            if (pinned) focused.SetPinned(true);
+            return;
+        }
+
         var selection = await SelectedTextReader.ReadAsync(
             SourceTextLimit.MaxLength, SettingsService.Instance.Current.QuickLookup.MultilineInput, copiedSince);
 
@@ -1349,7 +1358,9 @@ public partial class QuickLookupWindow : Window
         => await ToggleTtsAsync(
             TgtTtsBtn,
             TranslatedText.Text,
-            LanguageData.GetValidTargetCode(TgtLangBox.SelectedValue as string));
+            // Under 雙語互譯 the translation is in whichever of the pair the text resolved to, not
+            // necessarily the one the target picker shows.
+            LanguageData.GetValidTargetCode(_translatedTextLanguage ?? TgtLangBox.SelectedValue as string));
 
     /// <inheritdoc cref="Views.Translation.TranslationPage"/>
     private async Task ToggleTtsAsync(Button button, string text, string language)

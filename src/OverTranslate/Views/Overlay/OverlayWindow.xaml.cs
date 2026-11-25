@@ -100,12 +100,7 @@ public partial class OverlayWindow : Window
 
         Loaded += (_, _) =>
         {
-            var src = PresentationSource.FromVisual(this);
-            if (src?.CompositionTarget != null)
-            {
-                _dpiX = src.CompositionTarget.TransformToDevice.M11;
-                _dpiY = src.CompositionTarget.TransformToDevice.M22;
-            }
+            ReadDpi();
             _isLoaded = true;
             ApplyAnnotationBounds();
             BuildOverlay(
@@ -141,8 +136,22 @@ public partial class OverlayWindow : Window
         // MA_NOACTIVATE, not MA_NOACTIVATEANDEAT: the click still has to arrive as a stroke.
         HwndSource.FromHwnd(new WindowInteropHelper(this).Handle)?.AddHook(RefuseMouseActivate);
 
-        // Before Loaded reads the DPI: pinning settles which monitor the window belongs to.
+        // Before the DPI is read: pinning settles which monitor the window belongs to.
         ScreenGeometry.PinPhysicalBounds(this, _physBounds);
+
+        // Here as well as on Loaded: the recognising card is placed straight after Show, before
+        // Loaded, and placed at 1.0 it lands off-centre and oversized on a 125% screen.
+        ReadDpi();
+    }
+
+    private void ReadDpi()
+    {
+        var src = PresentationSource.FromVisual(this);
+        if (src?.CompositionTarget != null)
+        {
+            _dpiX = src.CompositionTarget.TransformToDevice.M11;
+            _dpiY = src.CompositionTarget.TransformToDevice.M22;
+        }
     }
 
     private const int WM_MOUSEACTIVATE = 0x0021;

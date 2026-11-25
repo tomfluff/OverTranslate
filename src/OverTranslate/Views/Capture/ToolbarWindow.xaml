@@ -18,7 +18,7 @@
          is a straight line — a faint grey rectangle around the bar that reads as a stray border. So
          the margin is at least the blur radius on every side, counted from the shadowed twin below,
          which is itself inset by 2. -->
-    <Border Margin="12,10,12,14">
+    <Border x:Name="FitRoot" Margin="12,10,12,14">
         <Grid>
             <!-- The shadow rides an empty twin of the bar rather than the bar itself. An Effect makes
                  WPF rasterise the element it is set on into an intermediate surface, and ClearType

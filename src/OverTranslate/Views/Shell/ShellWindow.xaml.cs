@@ -114,9 +114,11 @@ public partial class ShellWindow : Window
             _instance = new ShellWindow();
             _instance.Show();
         }
-        else if (_instance.WindowState == WindowState.Minimized)
+        else
         {
-            _instance.WindowState = WindowState.Normal;
+            // A realtime session hides the shell for its duration; asked for, it comes back.
+            if (!_instance.IsVisible) _instance.Show();
+            if (_instance.WindowState == WindowState.Minimized) _instance.WindowState = WindowState.Normal;
         }
 
         _instance.Navigate(target);
@@ -131,6 +133,14 @@ public partial class ShellWindow : Window
     public ShellWindow()
     {
         InitializeComponent();
+
+        // 1280×760 is taller than a 1366×768 laptop's work area at 125%, and a centred window that
+        // does not fit puts its title bar — the only way to move it — above the top of the screen.
+        var area = SystemParameters.WorkArea;
+        MinWidth = Math.Min(MinWidth, area.Width);
+        MinHeight = Math.Min(MinHeight, area.Height);
+        Width = Math.Min(Width, area.Width);
+        Height = Math.Min(Height, area.Height);
 
         BrandIcon.Source = AppIconService.CreateMainIcon();
         var compactIcon = AppIconService.CreateCompactIcon();

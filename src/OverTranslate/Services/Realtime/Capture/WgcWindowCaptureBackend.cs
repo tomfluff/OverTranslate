@@ -502,6 +502,12 @@ public sealed class WgcWindowCaptureBackend : IRealtimeCaptureBackend
         _pool.FrameArrived += OnFrameArrived;
 
         _session = _pool.CreateCaptureSession(item);
+
+        // As on the monitor backend: the pointer over the text is not the text, and every move of it
+        // over a watched region would otherwise read as a change.
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041))
+            _session.IsCursorCaptureEnabled = false;
+
         Volatile.Write(ref _systemSpacesFrames, WgcFrameThread.LimitFrameRate(_session, MaxFrameAge));
         WgcCaptureBorder.Apply(_session);
         _session.StartCapture();

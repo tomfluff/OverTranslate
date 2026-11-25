@@ -938,6 +938,13 @@ public partial class MainWindow : Window
         toolbar.CopyTextRequested       += OnCopyTextRequested;
         toolbar.CopyScreenshotRequested += OnCopyScreenshotRequested;
         toolbar.CloseAllRequested       += (_, _) => CloseAll("toolbar close");
+        // Alt+F4 on the bar closes it without asking it to close the rest.
+        toolbar.Closed += (_, _) =>
+        {
+            if (_tearingDown || !ReferenceEquals(_toolbarWindow, toolbar)) return;
+            _toolbarWindow = null;
+            CloseAll("toolbar closed itself");
+        };
         toolbar.BubblesVisibilityChanged += (_, visible) => _overlayWindow?.SetBubblesVisible(visible);
         toolbar.FilterNumbersChanged    += (_, _) => ApplyCaptureFilter();
         toolbar.SpeakToggleRequested    += OnSpeakToggleRequested;
@@ -999,18 +1006,12 @@ public partial class MainWindow : Window
         // This runs when the overlay closes on its own (Esc via the keyboard hook). Same fault
         // tolerance as CloseAll: a throwing toolbar Close() must not strand the capture window's
         // full-screen dim layer, which is the one window the user cannot get rid of.
+        // The whole of CloseAll, less the overlay that is already gone: a session paused for this
+        // capture is resumed, a voice reading it stops, and the recognition kept for it is dropped.
         _overlayClosedHandler = (_, _) =>
         {
-            _selectionSessionId++;
-            DisposeSessionHooks();
-            CancelSession();
-            CloseAnnotationPanel();
-            CloseWindow(_toolbarWindow, w => w.Close(), nameof(ToolbarWindow));
-            _toolbarWindow = null;
-            CloseWindow(_captureWindow, w => w.Close(), nameof(ScreenCaptureWindow));
-            _captureWindow = null;
             _overlayWindow = null;
-            RestoreShellAfterCapture();
+            CloseAll("overlay closed itself");
         };
         _overlayWindow.Closed += _overlayClosedHandler;
         _overlayWindow.AnnotationsChanged += (_, _) =>
@@ -1772,7 +1773,18 @@ public partial class MainWindow : Window
     /// several possible causes — Esc, a second press of the key or the button, an exception — and
     /// without this they all read the same.
     /// </param>
+    private bool _tearingDown;
+
     private void CloseAll(string reason)
+    {
+        // Closing the toolbar raises its Closed, which would come back in here.
+        if (_tearingDown) return;
+        _tearingDown = true;
+        try { TearDown(reason); }
+        finally { _tearingDown = false; }
+    }
+
+    private void TearDown(string reason)
     {
         // Paired with "Capture session starting": between them they show whether a session the user
         // reports as stuck ever actually ended.
