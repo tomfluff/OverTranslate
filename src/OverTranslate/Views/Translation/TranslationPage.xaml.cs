@@ -233,6 +233,7 @@ public partial class TranslationPage : UserControl
 
         // Also where a change of interface language lands, which is what re-reads the speaker's
         // tooltip in the new language.
+        if (selectionChanged) _detectedLang = "";
         RenderSourceActions();
 
         if (selectionChanged)
@@ -249,8 +250,10 @@ public partial class TranslationPage : UserControl
     {
         if (!_reloadingPreferences) SaveCurrentLanguageSelection();
 
-        // The engine was asked about a pair that is no longer the one on screen.
-        _detectedLang = "";
+        // The engine was asked about a pair that is no longer the one on screen. Not during Reload,
+        // whose rebinding passes through "nothing selected" on its way back to the same language;
+        // Reload clears it itself when the selection really changed.
+        if (!_reloadingPreferences) _detectedLang = "";
         RenderSourceActions();
         UpdateTextDirections();
         RequestTranslate();
@@ -288,8 +291,8 @@ public partial class TranslationPage : UserControl
         if (!_reloadingPreferences) SaveProviderSelection(provider);
 
         // The answer belongs to the engine that gave it, and the new one may not answer at all —
-        // which is the whole of what RenderSourceActions has to settle here.
-        _detectedLang = "";
+        // which is the whole of what RenderSourceActions has to settle here. See SrcLangBox_SelectionChanged.
+        if (!_reloadingPreferences) _detectedLang = "";
         RenderSourceActions();
         RequestTranslate();
     }
