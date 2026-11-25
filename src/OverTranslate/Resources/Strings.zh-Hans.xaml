@@ -12,6 +12,9 @@
     <!-- ── Shared ── -->
     <sys:String x:Key="S.Common.Reset">重置</sys:String>
     <sys:String x:Key="S.Common.Close">关闭</sys:String>
+    <sys:String x:Key="S.Window.Minimize">最小化</sys:String>
+    <sys:String x:Key="S.Window.Maximize">最大化</sys:String>
+    <sys:String x:Key="S.Window.Restore">还原</sys:String>
     <sys:String x:Key="S.Common.Cancel">取消</sys:String>
     <sys:String x:Key="S.Common.Save">保存</sys:String>
     <sys:String x:Key="S.Common.Configure">设置</sys:String>
@@ -105,12 +108,16 @@
     <sys:String x:Key="S.Error.LocalAiNoTranslation">本地模型未返回译文。</sys:String>
     <sys:String x:Key="S.Error.OpenAiBadUrl">OpenAI Compatible API 地址必须是有效的 HTTP 或 HTTPS 网址。</sys:String>
     <sys:String x:Key="S.Error.OpenAiNoModel">尚未指定模型名称。请在「翻译服务设置」中填入要使用的模型。</sys:String>
+    <sys:String x:Key="S.Error.OpenAiUnreachable">无法连接到 {0} 的服务器。它在运行吗？（例如启动 Ollama 或 LM Studio，或检查翻译服务设置中的地址。）</sys:String>
+    <sys:String x:Key="S.Error.DeepLKey">DeepL 不接受此 API 密钥。请在翻译服务设置中检查。</sys:String>
+    <sys:String x:Key="S.Error.DeepLQuota">此 DeepL 密钥本期的字符额度已用完，将在下个计费周期开始时重置。</sys:String>
+    <sys:String x:Key="S.Error.DeepLTooMany">此 DeepL 密钥的请求过多。请稍候再试。</sys:String>
     <sys:String x:Key="S.Error.UnknownError">未知错误</sys:String>
     <sys:String x:Key="S.Error.NoErrorContent">未提供错误内容</sys:String>
     <sys:String x:Key="S.Error.OcrUnsupportedLanguage">目前 OCR 仅支持 AUTO、EN、ZH、ZH-HANT、JA、KO、RU、UK；“{0}”尚未支持。</sys:String>
     <sys:String x:Key="S.Error.OcrSwapTimeout">等待其他识别结束以切换 OCR 模型时超时。</sys:String>
     <sys:String x:Key="S.Error.OcrImageConvert">无法将图像转换为 ONNX OCR 可读的格式。</sys:String>
-    <sys:String x:Key="S.Error.OcrModelMissing">找不到 OCR 模型文件：{0}</sys:String>
+    <sys:String x:Key="S.Error.OcrModelMissing">找不到 OCR 模型文件：{0} 请在“设置 → 识别语言”中下载该语言；如为内置语言，请重新安装。</sys:String>
     <sys:String x:Key="S.Error.NotTranslated">未翻译</sys:String>
 
     <!-- ── Text translation page ── -->
@@ -198,6 +205,8 @@
     <sys:String x:Key="S.Toolbar.Translating">翻译中...</sys:String>
     <sys:String x:Key="S.Toolbar.Recognising">识别中...</sys:String>
     <sys:String x:Key="S.Toolbar.Retranslate">重新翻译</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksTitle">要丢弃标记吗？</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksBody">再按一次 Esc 将关闭截图，标记会丢失。</sys:String>
     <sys:String x:Key="S.Toolbar.ShowSource">显示原文</sys:String>
     <sys:String x:Key="S.Toolbar.ShowTranslation">显示译文</sys:String>
     <sys:String x:Key="S.Toolbar.CopyText">复制文字</sys:String>
@@ -780,6 +789,7 @@
 
     <sys:String x:Key="S.Settings.Theme">主题</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">浅色</sys:String>
+    <sys:String x:Key="S.Settings.ThemeSystem">跟随 Windows</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">深色</sys:String>
     <sys:String x:Key="S.Settings.UiZoom">界面缩放</sys:String>
     <sys:String x:Key="S.Settings.TextSize">文字大小</sys:String>

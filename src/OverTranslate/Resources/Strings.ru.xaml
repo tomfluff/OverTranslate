@@ -17,6 +17,9 @@
     <!-- ── Shared ── -->
     <sys:String x:Key="S.Common.Reset">Сбросить</sys:String>
     <sys:String x:Key="S.Common.Close">Закрыть</sys:String>
+    <sys:String x:Key="S.Window.Minimize">Свернуть</sys:String>
+    <sys:String x:Key="S.Window.Maximize">Развернуть</sys:String>
+    <sys:String x:Key="S.Window.Restore">Восстановить</sys:String>
     <sys:String x:Key="S.Common.Cancel">Отмена</sys:String>
     <sys:String x:Key="S.Common.Save">Сохранить</sys:String>
     <sys:String x:Key="S.Common.Configure">Настроить</sys:String>
@@ -108,12 +111,16 @@
     <sys:String x:Key="S.Error.LocalAiNoTranslation">Локальная модель не вернула перевод.</sys:String>
     <sys:String x:Key="S.Error.OpenAiBadUrl">Адрес API, совместимого с OpenAI, должен быть корректным URL-адресом HTTP или HTTPS.</sys:String>
     <sys:String x:Key="S.Error.OpenAiNoModel">Не указано имя модели. Введите модель в настройках службы перевода.</sys:String>
+    <sys:String x:Key="S.Error.OpenAiUnreachable">Не удалось подключиться к серверу {0}. Он запущен? (Например, запустите Ollama или LM Studio либо проверьте адрес в настройках службы перевода.)</sys:String>
+    <sys:String x:Key="S.Error.DeepLKey">DeepL не принял ключ API. Проверьте его в настройках службы перевода.</sys:String>
+    <sys:String x:Key="S.Error.DeepLQuota">Лимит символов для этого ключа DeepL на текущий период исчерпан. Он обновится в начале следующего расчётного периода.</sys:String>
+    <sys:String x:Key="S.Error.DeepLTooMany">Слишком много запросов с этим ключом DeepL. Подождите немного и повторите попытку.</sys:String>
     <sys:String x:Key="S.Error.UnknownError">Неизвестная ошибка</sys:String>
     <sys:String x:Key="S.Error.NoErrorContent">Подробности ошибки отсутствуют</sys:String>
     <sys:String x:Key="S.Error.OcrUnsupportedLanguage">Распознавание текста сейчас поддерживает только AUTO, EN, ZH, ZH-HANT, JA, KO, RU и UK; «{0}» пока не поддерживается.</sys:String>
     <sys:String x:Key="S.Error.OcrSwapTimeout">Истекло время ожидания завершения другого распознавания перед сменой модели OCR.</sys:String>
     <sys:String x:Key="S.Error.OcrImageConvert">Не удалось преобразовать изображение в формат, понятный ONNX OCR.</sys:String>
-    <sys:String x:Key="S.Error.OcrModelMissing">Файл модели OCR не найден: {0}</sys:String>
+    <sys:String x:Key="S.Error.OcrModelMissing">Файл модели OCR не найден: {0} Загрузите язык в разделе «Настройки → Языки распознавания» или переустановите программу, если он встроенный.</sys:String>
     <sys:String x:Key="S.Error.NotTranslated">Не переведено</sys:String>
 
     <!-- ── Text translation page ── -->
@@ -195,6 +202,8 @@
     <sys:String x:Key="S.Toolbar.Translating">Перевод...</sys:String>
     <sys:String x:Key="S.Toolbar.Recognising">Распознавание...</sys:String>
     <sys:String x:Key="S.Toolbar.Retranslate">Перевести заново</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksTitle">Удалить пометки?</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksBody">Нажмите Esc ещё раз, чтобы закрыть снимок; пометки будут потеряны.</sys:String>
     <sys:String x:Key="S.Toolbar.ShowSource">Показать оригинал</sys:String>
     <sys:String x:Key="S.Toolbar.ShowTranslation">Показать перевод</sys:String>
     <sys:String x:Key="S.Toolbar.CopyText">Копировать текст</sys:String>
@@ -776,6 +785,7 @@
 
     <sys:String x:Key="S.Settings.Theme">Тема</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">Светлая</sys:String>
+    <sys:String x:Key="S.Settings.ThemeSystem">Как в Windows</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">Темная</sys:String>
     <sys:String x:Key="S.Settings.UiZoom">Масштаб интерфейса</sys:String>
     <sys:String x:Key="S.Settings.TextSize">Размер текста</sys:String>

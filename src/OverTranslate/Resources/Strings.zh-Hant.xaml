@@ -15,6 +15,9 @@
     <!-- ── Shared ── -->
     <sys:String x:Key="S.Common.Reset">重設</sys:String>
     <sys:String x:Key="S.Common.Close">關閉</sys:String>
+    <sys:String x:Key="S.Window.Minimize">最小化</sys:String>
+    <sys:String x:Key="S.Window.Maximize">最大化</sys:String>
+    <sys:String x:Key="S.Window.Restore">還原</sys:String>
     <sys:String x:Key="S.Common.Cancel">取消</sys:String>
     <sys:String x:Key="S.Common.Save">儲存</sys:String>
     <sys:String x:Key="S.Common.Configure">設定</sys:String>
@@ -111,12 +114,16 @@
     <sys:String x:Key="S.Error.LocalAiNoTranslation">本機模型未回傳譯文。</sys:String>
     <sys:String x:Key="S.Error.OpenAiBadUrl">OpenAI Compatible API 位址必須是有效的 HTTP 或 HTTPS 網址。</sys:String>
     <sys:String x:Key="S.Error.OpenAiNoModel">尚未指定模型名稱。請在「翻譯服務設定」中填入要使用的模型。</sys:String>
+    <sys:String x:Key="S.Error.OpenAiUnreachable">無法連線到 {0} 的伺服器。它在執行嗎？（例如啟動 Ollama 或 LM Studio，或檢查翻譯服務設定中的位址。）</sys:String>
+    <sys:String x:Key="S.Error.DeepLKey">DeepL 不接受此 API 金鑰。請在翻譯服務設定中檢查。</sys:String>
+    <sys:String x:Key="S.Error.DeepLQuota">此 DeepL 金鑰本期的字元額度已用完，將在下個計費週期開始時重設。</sys:String>
+    <sys:String x:Key="S.Error.DeepLTooMany">此 DeepL 金鑰的請求過多。請稍候再試。</sys:String>
     <sys:String x:Key="S.Error.UnknownError">未知錯誤</sys:String>
     <sys:String x:Key="S.Error.NoErrorContent">未提供錯誤內容</sys:String>
     <sys:String x:Key="S.Error.OcrUnsupportedLanguage">目前 OCR 僅支援 AUTO、EN、ZH、ZH-HANT、JA、KO、RU、UK；「{0}」尚未支援。</sys:String>
     <sys:String x:Key="S.Error.OcrSwapTimeout">等待其他辨識結束以切換 OCR 模型時逾時。</sys:String>
     <sys:String x:Key="S.Error.OcrImageConvert">無法將影像轉換為 ONNX OCR 可讀格式。</sys:String>
-    <sys:String x:Key="S.Error.OcrModelMissing">找不到 OCR 模型檔案：{0}</sys:String>
+    <sys:String x:Key="S.Error.OcrModelMissing">找不到 OCR 模型檔案：{0} 請在「設定 → 辨識語言」中下載該語言；若為內建語言，請重新安裝。</sys:String>
     <sys:String x:Key="S.Error.NotTranslated">未翻譯</sys:String>
 
     <!-- ── Text translation page ── -->
@@ -205,6 +212,8 @@
     <sys:String x:Key="S.Toolbar.Translating">翻譯中...</sys:String>
     <sys:String x:Key="S.Toolbar.Recognising">辨識中...</sys:String>
     <sys:String x:Key="S.Toolbar.Retranslate">重新翻譯</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksTitle">要捨棄標記嗎？</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksBody">再按一次 Esc 會關閉截圖，標記將會遺失。</sys:String>
     <sys:String x:Key="S.Toolbar.ShowSource">顯示原文</sys:String>
     <sys:String x:Key="S.Toolbar.ShowTranslation">顯示譯文</sys:String>
     <sys:String x:Key="S.Toolbar.CopyText">複製文字</sys:String>
@@ -805,6 +814,7 @@
 
     <sys:String x:Key="S.Settings.Theme">主題</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">淺色</sys:String>
+    <sys:String x:Key="S.Settings.ThemeSystem">跟隨 Windows</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">深色</sys:String>
     <sys:String x:Key="S.Settings.UiZoom">介面縮放</sys:String>
     <sys:String x:Key="S.Settings.TextSize">文字大小</sys:String>

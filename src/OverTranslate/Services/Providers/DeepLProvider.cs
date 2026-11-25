@@ -16,9 +16,27 @@ public sealed class DeepLProvider(HttpClient http) : ITranslationProvider
 {
     public bool RequiresApiKey => true;
 
-    public Task<(List<TranslatedBlock> Blocks, string DetectedLang)> TranslateAsync(
+    public async Task<(List<TranslatedBlock> Blocks, string DetectedLang)> TranslateAsync(
         List<OcrTextBlock> blocks, string sourceLang, string targetLang, string apiKey,
-        CancellationToken cancellationToken = default, TranslationContext? context = null) =>
-        new EngineProvider(new DeepLTranslator(http, apiKey))
-            .TranslateAsync(blocks, sourceLang, targetLang, apiKey, cancellationToken);
+        CancellationToken cancellationToken = default, TranslationContext? context = null)
+    {
+        try
+        {
+            return await new EngineProvider(new DeepLTranslator(http, apiKey))
+                .TranslateAsync(blocks, sourceLang, targetLang, apiKey, cancellationToken);
+        }
+        // DeepL's own statuses, in what to do about them rather than "DeepL: HTTP 456".
+        catch (OverTranslate.Translation.TranslationEngineException ex) when (MessageFor(ex.StatusCode) is { } key)
+        {
+            throw new InvalidOperationException(LocalizationService.Get(key), ex);
+        }
+    }
+
+    private static string? MessageFor(System.Net.HttpStatusCode? status) => (int?)status switch
+    {
+        401 or 403 => "S.Error.DeepLKey",
+        456 => "S.Error.DeepLQuota",
+        429 => "S.Error.DeepLTooMany",
+        _ => null,
+    };
 }

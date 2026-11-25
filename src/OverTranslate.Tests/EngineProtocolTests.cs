@@ -507,6 +507,22 @@ public class EngineProtocolTests
         Assert.Equal($"DeepL-Auth-Key {key}", sent.Headers["Authorization"]);
     }
 
+    /// <summary>A refused key and a used-up quota say what to do, not "DeepL: HTTP 456".</summary>
+    [Theory]
+    [InlineData(403, "S.Error.DeepLKey")]
+    [InlineData(456, "S.Error.DeepLQuota")]
+    public async Task DeepL_RefusalsAreWordedForTheUser(int status, string key)
+    {
+        var handler = new Canned(_ => new HttpResponseMessage((HttpStatusCode)status));
+        var provider = new OverTranslate.Services.Providers.DeepLProvider(new HttpClient(handler));
+
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            provider.TranslateAsync([new OverTranslate.Services.OcrTextBlock("Hello", new System.Windows.Rect())], "EN", "JA", "k"));
+
+        Assert.Equal(OverTranslate.Services.LocalizationService.Get(key), error.Message);
+        Assert.IsType<TranslationEngineException>(error.InnerException);
+    }
+
     [Fact]
     public async Task DeepL_SendsEveryTextInOneRequest_AndReadsTheDetectedLanguageBack()
     {

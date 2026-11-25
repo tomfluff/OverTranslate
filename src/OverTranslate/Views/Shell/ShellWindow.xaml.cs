@@ -49,16 +49,20 @@ public partial class ShellWindow : Window
     /// In memory rather than in the settings file, on purpose. Closing this window is the ordinary
     /// way to get it off the screen — the app goes on running in the tray — so reopening it during
     /// the same sitting should give back the window the user had, not the one the app ships with.
-    /// Surviving a restart is a different question, and the answer there is the designed default:
-    /// centred, at a size picked to fit the content.
+    /// Restarts start from what was saved when it last closed (AppSettings.ShellWidth and the rest),
+    /// still centred: a remembered position can be on a monitor that is no longer there.
     /// </remarks>
-    private static Size? _lastSize;
+    private static Size? _lastSize = Saved.ShellWidth > 0 && Saved.ShellHeight > 0
+        ? new Size(Saved.ShellWidth, Saved.ShellHeight)
+        : null;
+
+    private static Models.AppSettings Saved => SettingsService.Instance.Current;
 
     /// <inheritdoc cref="_lastSize"/>
-    private static WindowState _lastWindowState = WindowState.Normal;
+    private static WindowState _lastWindowState = Saved.ShellMaximized ? WindowState.Maximized : WindowState.Normal;
 
     /// <inheritdoc cref="_lastSize"/>
-    private static bool _lastRailCollapsed;
+    private static bool _lastRailCollapsed = Saved.ShellRailCollapsed;
 
     /// <summary>
     /// Whether the pin was on the last time the shell was open, for as long as the process lives.
@@ -78,7 +82,7 @@ public partial class ShellWindow : Window
     /// rather than always on 文字翻譯.
     /// </summary>
     /// <inheritdoc cref="_lastSize"/>
-    private static ShellPage _lastPage = ShellPage.Translation;
+    private static ShellPage _lastPage = Enum.TryParse<ShellPage>(Saved.ShellPage, out var saved) ? saved : ShellPage.Translation;
 
     private static readonly Duration IndicatorDuration = new(TimeSpan.FromMilliseconds(180));
     private static readonly Duration ContentDuration   = new(TimeSpan.FromMilliseconds(120));
@@ -199,8 +203,10 @@ public partial class ShellWindow : Window
     {
         if (_lastSize is { } size)
         {
-            Width  = size.Width;
-            Height = size.Height;
+            // Saved on another, larger screen, it is clamped as the designed size is.
+            var area = SystemParameters.WorkArea;
+            Width  = Math.Max(MinWidth, Math.Min(size.Width, area.Width));
+            Height = Math.Max(MinHeight, Math.Min(size.Height, area.Height));
         }
 
         if (_lastWindowState == WindowState.Maximized) WindowState = WindowState.Maximized;
@@ -377,8 +383,15 @@ public partial class ShellWindow : Window
     /// Driven from StateChanged rather than only from the button's own click: double-clicking the
     /// title bar and Aero Snap both maximise this window without going anywhere near it.
     /// </remarks>
-    private void RefreshMaximizeButton() =>
-        MaximizeBtn.Content = WindowState == WindowState.Maximized ? "" : "";
+    private void RefreshMaximizeButton()
+    {
+        var maximized = WindowState == WindowState.Maximized;
+        MaximizeBtn.Content = maximized ? "" : "";
+        // The glyph is all a screen reader would otherwise announce.
+        MaximizeBtn.SetResourceReference(
+            System.Windows.Automation.AutomationProperties.NameProperty,
+            maximized ? "S.Window.Restore" : "S.Window.Maximize");
+    }
 
     /// <summary>The rail's width whenever it is showing.</summary>
     /// <remarks>
@@ -771,6 +784,14 @@ public partial class ShellWindow : Window
         _lastWindowState = WindowState == WindowState.Minimized ? WindowState.Normal : WindowState;
         _lastRailCollapsed = _railCollapsed;
         _lastPinned = _pinned;
+
+        var settings = Saved;
+        settings.ShellWidth = bounds.Width;
+        settings.ShellHeight = bounds.Height;
+        settings.ShellMaximized = _lastWindowState == WindowState.Maximized;
+        settings.ShellRailCollapsed = _railCollapsed;
+        settings.ShellPage = _lastPage.ToString();
+        SettingsService.Instance.Save();
 
         base.OnClosing(e);
     }

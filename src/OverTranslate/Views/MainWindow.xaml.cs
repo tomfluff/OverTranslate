@@ -373,6 +373,9 @@ public partial class MainWindow : Window
             return;
         }
 
+        // Started by hand, the window is already showing what the notification would say.
+        if (!Environment.GetCommandLineArgs().Contains(StartupService.AutostartArgument)) return;
+
         var hotkeyDisplay = SettingsService.Instance.Current.HotkeyDisplay;
         var shortcutText = string.IsNullOrWhiteSpace(hotkeyDisplay)
             ? LocalizationService.Get("S.Main.DefaultShortcutName")
@@ -848,7 +851,7 @@ public partial class MainWindow : Window
             // orphaned instance would break Esc across the entire desktop, which is far worse
             // than the stuck overlay it exists to prevent.
             DisposeSessionHooks();
-            _escapeHook = GlobalEscapeHook.Install(() => CloseAll("esc hook"));
+            _escapeHook = GlobalEscapeHook.Install(OnCaptureEscape);
 
             // Paired with the Esc hook and for the same reason: these windows cover the screen, so
             // both ways out of a session that has gone wrong have to be set up before it can.
@@ -1774,6 +1777,28 @@ public partial class MainWindow : Window
     /// without this they all read the same.
     /// </param>
     private bool _tearingDown;
+
+    // When Esc last warned that marks would be lost; a second press within the window discards them.
+    private long _discardWarnedAt = long.MinValue / 2;
+
+    /// <summary>
+    /// Esc ends the capture — but marks drawn on it go with it and cannot be got back, so with any on
+    /// screen the first press only says so and a second within a few seconds closes.
+    /// </summary>
+    private void OnCaptureEscape()
+    {
+        if (_overlayWindow?.HasInk == true && Environment.TickCount64 - _discardWarnedAt > 3000)
+        {
+            _discardWarnedAt = Environment.TickCount64;
+            ShowNotice(
+                LocalizationService.Get("S.Toolbar.DiscardMarksTitle"),
+                LocalizationService.Get("S.Toolbar.DiscardMarksBody"),
+                NoticeKind.Info);
+            return;
+        }
+
+        CloseAll("esc hook");
+    }
 
     private void CloseAll(string reason)
     {

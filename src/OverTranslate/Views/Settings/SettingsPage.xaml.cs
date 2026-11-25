@@ -247,7 +247,8 @@ public partial class SettingsPage : UserControl
 
             foreach (var field in _hotkeyFields) ShowStoredShortcut(field, s);
 
-            LightThemeRadio.IsChecked = s.Theme != ThemeService.Dark;
+            SystemThemeRadio.IsChecked = s.Theme == ThemeService.FollowWindows;
+            LightThemeRadio.IsChecked = s.Theme is not (ThemeService.Dark or ThemeService.FollowWindows);
             DarkThemeRadio.IsChecked  = s.Theme == ThemeService.Dark;
 
             UiZoomBox.ItemsSource = ZoomService.Zooms.Select(z => new Choice(z, $"{z * 100:0}%")).ToList();
@@ -861,7 +862,8 @@ public partial class SettingsPage : UserControl
     private void ThemeRadio_Checked(object sender, RoutedEventArgs e)
     {
         if (_loading) return;
-        var theme = DarkThemeRadio.IsChecked == true ? ThemeService.Dark : ThemeService.Light;
+        var theme = SystemThemeRadio.IsChecked == true ? ThemeService.FollowWindows
+            : DarkThemeRadio.IsChecked == true ? ThemeService.Dark : ThemeService.Light;
         ThemeService.Apply(theme);
         Persist(s => s.Theme = theme);
     }

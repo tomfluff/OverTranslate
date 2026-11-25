@@ -105,6 +105,17 @@ public partial class App
                 e.Handled = true;
             }));
 
+        // An icon button's name is otherwise its glyph — a private-use character a screen reader
+        // reads as nothing. Its tooltip already says what it does.
+        EventManager.RegisterClassHandler(typeof(System.Windows.Controls.Button), FrameworkElement.LoadedEvent,
+            new RoutedEventHandler((sender, _) =>
+            {
+                if (sender is System.Windows.Controls.Button button &&
+                    string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetName(button)) &&
+                    button.ToolTip is string tip)
+                    System.Windows.Automation.AutomationProperties.SetName(button, tip);
+            }));
+
         // Windows waits its mouse-hover time, 400ms, before a ToolTip comes up — long enough that
         // people decide there is nothing there and move on. Half of it is still long enough not to
         // flash one up as the pointer crosses a control on its way somewhere else.
@@ -137,9 +148,14 @@ public partial class App
         MainWindow = mainWindow;
         mainWindow.InitializeApp();
 
-        // Back where the move was asked for: the app otherwise starts in the tray.
+        // Back where the move was asked for. Otherwise a start with Windows stays in the tray, and
+        // one the user asked for shows the window: a first run that only put up a notification,
+        // which Focus Assist may hide, looked like nothing had happened.
+        StartupService.UpgradeEntry();
         if (restartedFrom is not null)
             ShellWindow.ShowOrActivate(ShellPage.Settings).ShowAssetsMoved();
+        else if (!e.Args.Contains(StartupService.AutostartArgument))
+            ShellWindow.ShowOrActivate();
 
         UpdateNotifier.StartPolling();
         _ = PromptForUpdateAsync();

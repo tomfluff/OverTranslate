@@ -13,6 +13,9 @@
     <!-- ── Shared ── -->
     <sys:String x:Key="S.Common.Reset">リセット</sys:String>
     <sys:String x:Key="S.Common.Close">閉じる</sys:String>
+    <sys:String x:Key="S.Window.Minimize">最小化</sys:String>
+    <sys:String x:Key="S.Window.Maximize">最大化</sys:String>
+    <sys:String x:Key="S.Window.Restore">元のサイズに戻す</sys:String>
     <sys:String x:Key="S.Common.Cancel">キャンセル</sys:String>
     <sys:String x:Key="S.Common.Save">保存</sys:String>
     <sys:String x:Key="S.Common.Configure">設定</sys:String>
@@ -106,12 +109,16 @@
     <sys:String x:Key="S.Error.LocalAiNoTranslation">ローカルモデルから訳文が返されませんでした。</sys:String>
     <sys:String x:Key="S.Error.OpenAiBadUrl">OpenAI 互換 API のアドレスは有効な HTTP または HTTPS の URL である必要があります。</sys:String>
     <sys:String x:Key="S.Error.OpenAiNoModel">モデル名が設定されていません。翻訳サービス設定で使用するモデルを入力してください。</sys:String>
+    <sys:String x:Key="S.Error.OpenAiUnreachable">{0} のサーバーに接続できませんでした。起動していますか？（Ollama や LM Studio を起動するか、翻訳サービス設定のアドレスを確認してください。）</sys:String>
+    <sys:String x:Key="S.Error.DeepLKey">DeepL が API キーを受け付けませんでした。翻訳サービス設定でキーを確認してください。</sys:String>
+    <sys:String x:Key="S.Error.DeepLQuota">この DeepL キーは今期の文字数上限に達しました。次の請求期間の開始時にリセットされます。</sys:String>
+    <sys:String x:Key="S.Error.DeepLTooMany">この DeepL キーからのリクエストが多すぎます。少し待ってからもう一度お試しください。</sys:String>
     <sys:String x:Key="S.Error.UnknownError">不明なエラー</sys:String>
     <sys:String x:Key="S.Error.NoErrorContent">エラーの詳細はありません</sys:String>
     <sys:String x:Key="S.Error.OcrUnsupportedLanguage">OCR が対応しているのは AUTO、EN、ZH、ZH-HANT、JA、KO、RU、UK のみです。「{0}」はまだ対応していません。</sys:String>
     <sys:String x:Key="S.Error.OcrSwapTimeout">OCR モデルの切り替えのため他の認識の完了を待ちましたが、タイムアウトしました。</sys:String>
     <sys:String x:Key="S.Error.OcrImageConvert">画像を ONNX OCR が読める形式に変換できませんでした。</sys:String>
-    <sys:String x:Key="S.Error.OcrModelMissing">OCR モデルファイルが見つかりません：{0}</sys:String>
+    <sys:String x:Key="S.Error.OcrModelMissing">OCR モデルファイルが見つかりません：{0} 設定の「認識言語」で言語をダウンロードしてください。内蔵の言語の場合は再インストールしてください。</sys:String>
     <sys:String x:Key="S.Error.NotTranslated">未翻訳</sys:String>
 
     <!-- ── Text translation page ── -->
@@ -199,6 +206,8 @@
     <sys:String x:Key="S.Toolbar.Translating">翻訳中...</sys:String>
     <sys:String x:Key="S.Toolbar.Recognising">認識中...</sys:String>
     <sys:String x:Key="S.Toolbar.Retranslate">もう一度翻訳</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksTitle">描いたマークを破棄しますか？</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksBody">もう一度 Esc を押すとキャプチャを閉じ、マークは失われます。</sys:String>
     <sys:String x:Key="S.Toolbar.ShowSource">原文を表示</sys:String>
     <sys:String x:Key="S.Toolbar.ShowTranslation">訳文を表示</sys:String>
     <sys:String x:Key="S.Toolbar.CopyText">テキストをコピー</sys:String>
@@ -784,6 +793,7 @@
 
     <sys:String x:Key="S.Settings.Theme">テーマ</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">ライト</sys:String>
+    <sys:String x:Key="S.Settings.ThemeSystem">Windows に合わせる</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">ダーク</sys:String>
     <sys:String x:Key="S.Settings.UiZoom">表示の拡大率</sys:String>
     <sys:String x:Key="S.Settings.TextSize">文字サイズ</sys:String>

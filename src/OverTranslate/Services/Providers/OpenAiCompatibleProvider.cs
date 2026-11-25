@@ -231,6 +231,12 @@ public sealed class OpenAiCompatibleProvider : ITranslationProvider
         {
             throw Localized(ex, options.TimeoutSeconds);
         }
+        // No answer at all: the raw message is a socket error that does not say what to check.
+        catch (HttpRequestException ex) when (ex.StatusCode is null)
+        {
+            throw new HttpRequestException(
+                LocalizationService.Format("S.Error.OpenAiUnreachable", endpoint.Authority), ex);
+        }
 
         // Only some blocks failed — every one failing was thrown above, in the user's words. Kinds
         // and counts only, never the text, so this stays in the shipped log: it is what explains a

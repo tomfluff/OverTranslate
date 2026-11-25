@@ -256,6 +256,24 @@ public class AppSettings
     /// </summary>
     public double UiZoom { get; set; } = 1.0;
 
+    /// <summary>
+    /// The main window as it was last closed — size (0 for the designed one), maximised, rail
+    /// collapsed, and page — so a restart gives back the window the user had.
+    /// </summary>
+    public double ShellWidth { get; set; }
+
+    /// <inheritdoc cref="ShellWidth"/>
+    public double ShellHeight { get; set; }
+
+    /// <inheritdoc cref="ShellWidth"/>
+    public bool ShellMaximized { get; set; }
+
+    /// <inheritdoc cref="ShellWidth"/>
+    public bool ShellRailCollapsed { get; set; }
+
+    /// <inheritdoc cref="ShellWidth"/>
+    public string ShellPage { get; set; } = "";
+
     /// <summary>The font size of the text in the translation boxes, which Quick Lookup's result follows.</summary>
     public double TextBoxFontSize { get; set; } = 14;
 

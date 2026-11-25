@@ -551,6 +551,11 @@
                                            Style="{StaticResource FieldLabel}"
                                            Margin="0,14,0,7"/>
                                 <StackPanel Orientation="Horizontal">
+                                    <RadioButton x:Name="SystemThemeRadio"
+                                                 Content="{DynamicResource S.Settings.ThemeSystem}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadioButton}"
+                                                 Checked="ThemeRadio_Checked"/>
                                     <RadioButton x:Name="LightThemeRadio"
                                                  Content="{DynamicResource S.Settings.ThemeLight}"
                                                  GroupName="ThemeGroup"

@@ -13,6 +13,9 @@
     <!-- ── Shared ── -->
     <sys:String x:Key="S.Common.Reset">초기화</sys:String>
     <sys:String x:Key="S.Common.Close">닫기</sys:String>
+    <sys:String x:Key="S.Window.Minimize">최소화</sys:String>
+    <sys:String x:Key="S.Window.Maximize">최대화</sys:String>
+    <sys:String x:Key="S.Window.Restore">이전 크기로 복원</sys:String>
     <sys:String x:Key="S.Common.Cancel">취소</sys:String>
     <sys:String x:Key="S.Common.Save">저장</sys:String>
     <sys:String x:Key="S.Common.Configure">설정</sys:String>
@@ -106,12 +109,16 @@
     <sys:String x:Key="S.Error.LocalAiNoTranslation">로컬 모델이 번역문을 반환하지 않았습니다.</sys:String>
     <sys:String x:Key="S.Error.OpenAiBadUrl">OpenAI 호환 API 주소는 올바른 HTTP 또는 HTTPS URL이어야 합니다.</sys:String>
     <sys:String x:Key="S.Error.OpenAiNoModel">모델 이름이 설정되지 않았습니다. 번역 서비스 설정에서 사용할 모델을 입력하세요.</sys:String>
+    <sys:String x:Key="S.Error.OpenAiUnreachable">{0} 서버에 연결할 수 없습니다. 실행 중인가요? (Ollama나 LM Studio를 실행하거나 번역 서비스 설정의 주소를 확인하세요.)</sys:String>
+    <sys:String x:Key="S.Error.DeepLKey">DeepL이 API 키를 받아들이지 않았습니다. 번역 서비스 설정에서 키를 확인하세요.</sys:String>
+    <sys:String x:Key="S.Error.DeepLQuota">이 DeepL 키의 이번 기간 글자 수 한도를 모두 사용했습니다. 다음 결제 기간이 시작되면 초기화됩니다.</sys:String>
+    <sys:String x:Key="S.Error.DeepLTooMany">이 DeepL 키의 요청이 너무 많습니다. 잠시 후 다시 시도하세요.</sys:String>
     <sys:String x:Key="S.Error.UnknownError">알 수 없는 오류</sys:String>
     <sys:String x:Key="S.Error.NoErrorContent">오류 내용이 없습니다</sys:String>
     <sys:String x:Key="S.Error.OcrUnsupportedLanguage">OCR은 현재 AUTO, EN, ZH, ZH-HANT, JA, KO, RU, UK만 지원합니다. ‘{0}’은(는) 아직 지원하지 않습니다.</sys:String>
     <sys:String x:Key="S.Error.OcrSwapTimeout">OCR 모델을 바꾸려고 다른 인식이 끝나기를 기다렸으나 시간이 초과되었습니다.</sys:String>
     <sys:String x:Key="S.Error.OcrImageConvert">이미지를 ONNX OCR이 읽을 수 있는 형식으로 변환하지 못했습니다.</sys:String>
-    <sys:String x:Key="S.Error.OcrModelMissing">OCR 모델 파일을 찾을 수 없습니다: {0}</sys:String>
+    <sys:String x:Key="S.Error.OcrModelMissing">OCR 모델 파일을 찾을 수 없습니다: {0} 설정의 인식 언어에서 해당 언어를 내려받으세요. 기본 제공 언어라면 다시 설치하세요.</sys:String>
     <sys:String x:Key="S.Error.NotTranslated">번역되지 않음</sys:String>
 
     <!-- ── Text translation page ── -->
@@ -199,6 +206,8 @@
     <sys:String x:Key="S.Toolbar.Translating">번역 중...</sys:String>
     <sys:String x:Key="S.Toolbar.Recognising">인식 중...</sys:String>
     <sys:String x:Key="S.Toolbar.Retranslate">다시 번역</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksTitle">그린 표시를 버릴까요?</sys:String>
+    <sys:String x:Key="S.Toolbar.DiscardMarksBody">Esc를 한 번 더 누르면 캡처를 닫고 표시가 사라집니다.</sys:String>
     <sys:String x:Key="S.Toolbar.ShowSource">원문 보기</sys:String>
     <sys:String x:Key="S.Toolbar.ShowTranslation">번역문 보기</sys:String>
     <sys:String x:Key="S.Toolbar.CopyText">텍스트 복사</sys:String>
@@ -784,6 +793,7 @@
 
     <sys:String x:Key="S.Settings.Theme">테마</sys:String>
     <sys:String x:Key="S.Settings.ThemeLight">라이트</sys:String>
+    <sys:String x:Key="S.Settings.ThemeSystem">Windows 설정 따르기</sys:String>
     <sys:String x:Key="S.Settings.ThemeDark">다크</sys:String>
     <sys:String x:Key="S.Settings.UiZoom">화면 확대/축소</sys:String>
     <sys:String x:Key="S.Settings.TextSize">글자 크기</sys:String>

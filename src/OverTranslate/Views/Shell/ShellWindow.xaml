@@ -108,6 +108,7 @@
                         FontSize="12"
                         Click="PinBtn_Click"/>
                 <Button x:Name="MinimizeBtn"
+                        AutomationProperties.Name="{DynamicResource S.Window.Minimize}"
                         Style="{StaticResource WindowCaptionButton}"
                         Content="&#xE921;"
                         Click="MinimizeBtn_Click"/>
@@ -118,6 +119,7 @@
                         Content="&#xE922;"
                         Click="MaximizeBtn_Click"/>
                 <Button x:Name="CloseBtn"
+                        AutomationProperties.Name="{DynamicResource S.Common.Close}"
                         Style="{StaticResource WindowCloseButton}"
                         Content="&#xE8BB;"
                         Click="CloseBtn_Click"/>
