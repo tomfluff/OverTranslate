@@ -22,6 +22,13 @@ public class TextDirectionTests
         Assert.Equal(FlowDirection.RightToLeft, TextDirection.Of(text, "FA"));
 
     [Theory]
+    [InlineData("הדלת נעולה.")]
+    [InlineData("לחצו F5 כדי לשמור (גרסה 2.1).")]   // a key name and a number inside Hebrew
+    [InlineData("שָׁלוֹם")]                          // with vowel points
+    public void Hebrew_IsSetRightToLeft(string text) =>
+        Assert.Equal(FlowDirection.RightToLeft, TextDirection.Of(text, "HE"));
+
+    [Theory]
     [InlineData("Steam!")]               // came back untranslated: a name
     [InlineData("The door is locked.")]
     [InlineData("剣は折れてしまった。")]

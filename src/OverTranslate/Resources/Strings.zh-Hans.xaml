@@ -854,6 +854,7 @@
     <sys:String x:Key="S.Lang.Persian">波斯语</sys:String>
     <sys:String x:Key="S.Lang.Finnish">芬兰语</sys:String>
     <sys:String x:Key="S.Lang.French">法语</sys:String>
+    <sys:String x:Key="S.Lang.Hebrew">希伯来语</sys:String>
     <sys:String x:Key="S.Lang.Hungarian">匈牙利语</sys:String>
     <sys:String x:Key="S.Lang.Indonesian">印度尼西亚语</sys:String>
     <sys:String x:Key="S.Lang.Italian">意大利语</sys:String>

@@ -856,6 +856,7 @@ same settings, the same seed usually gives the same output.</sys:String>
     <sys:String x:Key="S.Lang.Persian">Persian</sys:String>
     <sys:String x:Key="S.Lang.Finnish">Finnish</sys:String>
     <sys:String x:Key="S.Lang.French">French</sys:String>
+    <sys:String x:Key="S.Lang.Hebrew">Hebrew</sys:String>
     <sys:String x:Key="S.Lang.Hungarian">Hungarian</sys:String>
     <sys:String x:Key="S.Lang.Indonesian">Indonesian</sys:String>
     <sys:String x:Key="S.Lang.Italian">Italian</sys:String>

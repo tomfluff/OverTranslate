@@ -126,6 +126,22 @@ public class BilingualDirectionTests
         Assert.Equal(Japanese, BilingualDirection.ResolveSource("サーバー", Hant, Japanese));
     }
 
+    // ═══════════ Hebrew ═══════════
+
+    [Theory]
+    [InlineData("מים")]
+    [InlineData("לחצו F5 כדי לשמור")]   // a key name inside Hebrew: the Hebrew letters outnumber it
+    public void HebrewGoesToEnglishUnderTheHebrewEnglishPair(string text)
+    {
+        Assert.Equal("HE", BilingualDirection.ResolveSource(text, English, "HE"));
+        Assert.Equal("HE", BilingualDirection.ResolveSource(text, "HE", English));
+        Assert.Equal("HE", BilingualDirection.ResolveSource(text, "HE", Japanese));
+    }
+
+    [Fact]
+    public void EnglishGoesToHebrewUnderTheHebrewEnglishPair() =>
+        Assert.Equal(English, BilingualDirection.ResolveSource("water", "HE", English));
+
     // ═══════════ Persian (#372) ═══════════
 
     [Theory]

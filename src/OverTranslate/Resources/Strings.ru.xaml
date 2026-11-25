@@ -847,6 +847,7 @@
     <sys:String x:Key="S.Lang.Persian">Персидский</sys:String>
     <sys:String x:Key="S.Lang.Finnish">Финский</sys:String>
     <sys:String x:Key="S.Lang.French">Французский</sys:String>
+    <sys:String x:Key="S.Lang.Hebrew">Иврит</sys:String>
     <sys:String x:Key="S.Lang.Hungarian">Венгерский</sys:String>
     <sys:String x:Key="S.Lang.Indonesian">Индонезийский</sys:String>
     <sys:String x:Key="S.Lang.Italian">Итальянский</sys:String>

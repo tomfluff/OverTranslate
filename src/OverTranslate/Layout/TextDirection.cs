@@ -70,11 +70,10 @@ internal static class TextDirection
 
     /// <summary>
     /// Whether <paramref name="code"/> is one of the languages this application offers that is
-    /// written right to left — Persian, so far.
+    /// written right to left — Persian and Hebrew.
     /// </summary>
     private static bool IsRightToLeftLanguage(string? code) =>
-        code is not null &&
-        code.Split('-')[0].Equals("fa", StringComparison.OrdinalIgnoreCase);
+        code?.Split('-')[0].ToLowerInvariant() is "fa" or "he";
 
     private static bool IsRightToLeftScript(int v) =>
         v is >= 0x0590 and <= 0x08FF or    // Hebrew, Arabic, Syriac, Thaana, N'Ko, Samaritan, Mandaic, Arabic Extended

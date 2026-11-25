@@ -858,6 +858,7 @@
     <sys:String x:Key="S.Lang.Persian">페르시아어</sys:String>
     <sys:String x:Key="S.Lang.Finnish">핀란드어</sys:String>
     <sys:String x:Key="S.Lang.French">프랑스어</sys:String>
+    <sys:String x:Key="S.Lang.Hebrew">히브리어</sys:String>
     <sys:String x:Key="S.Lang.Hungarian">헝가리어</sys:String>
     <sys:String x:Key="S.Lang.Indonesian">인도네시아어</sys:String>
     <sys:String x:Key="S.Lang.Italian">이탈리아어</sys:String>

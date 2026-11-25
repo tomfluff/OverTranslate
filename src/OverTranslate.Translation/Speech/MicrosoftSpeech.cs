@@ -33,6 +33,7 @@ internal static class MicrosoftVoices
         ["fa"]    = ("fa-IR-DilaraNeural", "fa-IR"),
         ["fi"]    = ("fi-FI-NooraNeural", "fi-FI"),
         ["fr"]    = ("fr-FR-DeniseNeural", "fr-FR"),
+        ["he"]    = ("he-IL-HilaNeural", "he-IL"),
         ["hu"]    = ("hu-HU-TamasNeural", "hu-HU"),
         ["id"]    = ("id-ID-ArdiNeural", "id-ID"),
         ["it"]    = ("it-IT-DiegoNeural", "it-IT"),
